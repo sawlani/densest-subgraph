@@ -150,15 +150,15 @@ int main(int argc, char** argv) {
 	outfile << "Iterations: " << iters << endl;
 	outfile << "Max load: " << w[V[0]] << endl;
 	outfile << "Approximate maximum density: " << maxdens << endl;
-	outfile << "Approximate densest subgraph:" << endl;
+	//outfile << "Approximate densest subgraph:" << endl;
 
-	for (int i = 0; i< n;i++)
+	/*for (int i = 0; i< n;i++)
 	{
 		if (dsg[i])
 		{
 			outfile << i << endl;
 		}
-	}
+	}*/
 	outfile << endl << endl;
 	////////////////////////
 	// If the solution is known, compute actual value of maximum density from solution file:
