@@ -26,7 +26,8 @@ set<int,classcomp> ordered_deg; //BBST storing degrees
 
 int main(int argc, char** argv) {
 
-	double eps = atof(argv[1]);
+	int iters = atoi(argv[1]);
+	double eps = 1.0/iters;
 	string input_file = argv[2];
 	
 	string output_file;
@@ -48,10 +49,11 @@ int main(int argc, char** argv) {
 	cin >> n >> m;
 	unordered_set<int> g[n];
 	int e[m][2];
-	
+
 	w.reserve(n);
 	deg.reserve(n);
 
+	//cout << n << m << endl;
 	for (int i = 0; i < n; i++) 
 		w[i] = 0; //initial vertex weights=0, i.e., no self loops at the start
 	for (int i = 0; i < m; i++) {
@@ -62,7 +64,8 @@ int main(int argc, char** argv) {
 		e[i][0] = p;
 		e[i][1] = q;
 	}
-	for (int tt = 0; tt < int(1.0/eps); tt++) {
+	for (int tt = 0; tt < iters; tt++) {
+		//cout << tt << endl;
 		ordered_deg.clear();
 		for (int i = 0; i < n; i++) {
 			deg[i] = w[i]; //degree for this iteration is "vertex weight" + actual degree
@@ -89,6 +92,7 @@ int main(int argc, char** argv) {
 			}
 		}
 	}
+
 	double ds = 0;
 	for (int i = 0; i < n; i++)
 		if (ds < w[i])
