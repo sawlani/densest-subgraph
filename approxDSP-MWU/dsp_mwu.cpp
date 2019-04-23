@@ -1,10 +1,12 @@
 #include <iostream>
+#include <fstream>
 #include <string>
 #include <stdio.h>
 #include <stdlib.h>
 #include <vector>   
 #include <queue> 
 #include <set>
+#include <algorithm>
 #include <unordered_set>
 using namespace std;
 
@@ -29,6 +31,7 @@ int main(int argc, char** argv) {
 	string input_file = argv[2];
 	
 	string output_file;
+	ofstream outfile;
 
 	if (argc >= 4)
 	{
@@ -63,25 +66,28 @@ int main(int argc, char** argv) {
 		e[i][1] = q;
 		adj_v[p].insert(q);
 		adj_v[q].insert(p);
-		adj_e[p].insert(i);
-		adj_e[q].insert(i);
+		adj_e[p].push_back(i);
+		adj_e[q].push_back(i);
 	}
 
 	double D = n; //change this
 	vector<double> y(m,1); //Initialize probability (dual) vector. Note that we are not scaling it to sum to 1.
 	int q=2;
+	double C;
 	vector<double> z(2*m); //Primal vector
+	vector<double> z_avg(2*m, 0);
 
 	for (int tt = 0; tt < iters && feasible; tt++) {
 		
-		///////////////////////////// INNER PROBLEM
+		///////////////////////////// INNER PROBLEM //////////////////////////
 		for (int v=0; v<n; v++)
 		{
 			z.clear();
-			E = adj_e[v];
+			vector<int> E = adj_e[v];
 			double D_temp = D;
-			double C = 0;
+			C = 0;
 			sort(E.begin(),E.end(), [&](int i,int j){return y[i]>y[j];} );
+			int j;
 			for (j=0; D_temp > q; j++)
 			{
 				int edge = E[j];
@@ -102,16 +108,16 @@ int main(int argc, char** argv) {
 			if (e[edge][0] == v)
 			{
 				z[2*edge] == D_temp;
-				z_avg[2*edge] += (double)D_temp/T;
+				z_avg[2*edge] += (double)D_temp/iters;
 			}
 			else
 			{
 				z[2*edge + 1] == D_temp;
-				z_avg[2*edge + 1] += (double)D_temp/T;
+				z_avg[2*edge + 1] += (double)D_temp/iters;
 			}
 			C += y[edge]*D_temp;
 		}
-		/////////////////////////////
+		////////////////////////////////////////////////////////////////////////
 
 		double sum_y = 0;
 		for (int edge=0; edge < m; edge++)
@@ -126,11 +132,13 @@ int main(int argc, char** argv) {
 		{
 			for (int j=0; j<m; j++)
 			{
-				y[j] = y[j]*(1- 0.25*eps*(z[2*j]+z[2*j+1]))
+				y[j] = y[j]*(1- 0.25*eps*(z[2*j]+z[2*j+1]));
 			}
 		}
 
 	}
+
+	outfile << "Feasible for D value: " << D;
 
 
 
