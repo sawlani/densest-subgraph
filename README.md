@@ -19,10 +19,10 @@ um vm
 To run the exact max-flow based algorithm,
 use
 ```
-python3 exactDSP-python/exactDSP.py * *input_file* *
+python3 exactDSP-python/exactDSP.py **input_file**
 ```
 
-The result appears in the **results_exact** folder.
+The result gets appended to the **results/results_exact** file.
 
 ### C++ code
 
@@ -38,7 +38,7 @@ g++ -o dsp recursive_peeling.cpp
 
 To run the code, use:
 ```
-./dsp * *number_of_iterations input_file output_file solution_file* *
+./dsp **number_of_iterations input_file output_file solution_file**
 ```
 
 The last two arguments are optional.

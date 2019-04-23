@@ -10,8 +10,8 @@ with open(filename, 'r') as fin:
 with open(filename+".mod", 'w+') as fout:
 	fout.writelines(data[1:])
 
-result_folder = "results_exact/"
-result_filename = result_folder + "results.txt"
+result_folder = "results/"
+result_filename = result_folder + "results_exact.txt"
 G = nx.read_edgelist(filename+".mod")
 nx.set_edge_attributes(G, 1, 'capacity')
 G = nx.DiGraph(G)
@@ -60,6 +60,7 @@ f.write("\n")
 f.write(str(V - {'s'}))
 f.write("\n")
 f.write(str(bestg))
+f.write("\n")
 
 #start_time = time.time()
 #end_time = time.time()
