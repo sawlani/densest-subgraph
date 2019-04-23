@@ -1,14 +1,18 @@
 import networkx as nx
 #import time
 import sys
+import os
 
-dataset_folder = "datasets/"
-file = sys.argv[1]
-filename = dataset_folder+file
+filename = sys.argv[1]
+
+with open(filename, 'r') as fin:
+	data = fin.read().splitlines(True)
+with open(filename+".mod", 'w+') as fout:
+	fout.writelines(data[1:])
 
 result_folder = "results_exact/"
-result_filename = result_folder + file + ".res"
-G = nx.read_edgelist(filename)
+result_filename = result_folder + "results.txt"
+G = nx.read_edgelist(filename+".mod")
 nx.set_edge_attributes(G, 1, 'capacity')
 G = nx.DiGraph(G)
 n = G.number_of_nodes()
@@ -49,8 +53,10 @@ while maxD - minD > 0:
 		bestg = g
 	#print(maxD)
 	#print(minD)
-
-f = open(result_filename,"w+") 
+os.remove(filename+".mod")
+f = open(result_filename,"a+") 
+f.write(filename)
+f.write("\n")
 f.write(str(V - {'s'}))
 f.write("\n")
 f.write(str(bestg))

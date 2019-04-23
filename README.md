@@ -19,7 +19,7 @@ um vm
 To run the exact max-flow based algorithm,
 use
 ```
-python3 exactDSP-python/exactDSP.py * *input_file*
+python3 exactDSP-python/exactDSP.py * *input_file* *
 ```
 
 The result appears in the **results_exact** folder.
