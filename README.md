@@ -48,6 +48,8 @@ To run the code, use:
 ```
 The last two arguments are optional.
 
+The result gets appended to the **results/results_recursive_peeling** file.
+
 ### MWU: C++ code
 
 To compile the C++ code, use:
@@ -58,9 +60,9 @@ g++ -o mwu dsp_mwu.cpp
 
 To run the code, use:
 ```
-./mwu number_of_iterations accuracy input_file output_file solution_file
+./mwu number_of_iterations accuracy input_file output_file
 ```
-The last argument are optional.
+The last argument is optional.
 
 The results are on the command line.
 
