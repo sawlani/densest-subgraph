@@ -28,15 +28,15 @@ struct classcomp {
 int main(int argc, char** argv) {
 
 	int iters = atoi(argv[1]);
-	double eps = 0.1;
-	string input_file = argv[2];
+	double eps = atof(argv[2]);
+	string input_file = argv[3];
 	
 	string output_file;
 	ofstream outfile;
 
-	if (argc >= 4)
+	if (argc >= 5)
 	{
-		output_file = argv[3];
+		output_file = argv[4];
 	}
 	else
 	{
@@ -54,7 +54,7 @@ int main(int argc, char** argv) {
 	w.reserve(n);
 	deg.reserve(n);
 
-	bool feasible = true;
+	
 
 	for (int i = 0; i < n; i++) 
 		w[i] = 0; //initial vertex weights=0, i.e., no self loops at the start
@@ -86,97 +86,117 @@ int main(int argc, char** argv) {
 		}
 	}*/
 
-	double D = 1.24; //change this
-	vector<double> y(m,1.0); //Initialize probability (dual) vector. Note that we are not scaling it to sum to 1.
-	int q=2;
-	double C;
-	vector<double> z(2*m,0.0); //Primal vector
-	vector<double> z_avg(2*m, 0.0);
+	double l = 0, r = m, D, density;
+	bool feasible;
+	int k=0;
 
-	for (int tt = 0; tt < iters && feasible; tt++) {
-		
-		///////////////////////////// INNER PROBLEM //////////////////////////
-		fill(z.begin(), z.end(), 0);
-		C = 0;
-		for (int v=0; v<n; v++)
-		{
-			vector<int> E = adj_e[v];
-			double D_temp = D;
-			sort(E.begin(),E.end(), [&](int i,int j){return y[i]>y[j];} );
-			int j;
-			for (j=0; j < E.size() && D_temp > q; j++)
-			{
-				//cout << v << j << " " << E[j] << endl;
-				int edge = E[j];
-				if (e[edge][0] == v)
-				{
-					z[2*edge] = q;
-					z_avg[2*edge] += (double)q/iters;
-				}
-				else
-				{
-					z[2*edge + 1] = q;
-					z_avg[2*edge + 1] += (double)q/iters;
-				}
-				C += y[edge]*q;
-				D_temp -= q;
-			}
-			if (j < E.size())
-			{
-				//cout << v << j << " " << E[j] << endl;
-				int edge = E[j];
-				if (e[edge][0] == v)
-				{
-					z[2*edge] = D_temp;
-					z_avg[2*edge] += (double)D_temp/iters;
-				}
-				else
-				{
-					z[2*edge + 1] = D_temp;
-					z_avg[2*edge + 1] += (double)D_temp/iters;
-				}
-				C += y[edge]*D_temp;
-			}
-			/*cout << "z values" << endl; 
-			for (int j=0; j<2*m; j++)
-			{
-				cout << "  " << z[j];
-			}*/
-			
-			
-			
-		}
+	while (l < r - eps && k<20)
+	{
+		k++;
+		feasible = true;
+		D = (l+r)/2;
+		//cout << l << " " << D << " " << r << endl;
+		vector<double> y(m,1.0); //Initialize probability (dual) vector. Note that we are not scaling it to sum to 1.
+		int q=2;
+		double C;
+		vector<double> z(2*m,0.0); //Primal vector
+		vector<double> z_avg(2*m, 0.0);
 
-		////////////////////////////////////////////////////////////////////////
-		double sum_y = 0;
-		for (int edge=0; edge < m; edge++)
-		{
-			sum_y += y[edge];
-		}
-		if (C < sum_y)
-		{
-			feasible = false;
-		}
-		else
-		{
+		for (int tt = 0; tt < iters && feasible; tt++) {
+			
+			///////////////////////////// INNER PROBLEM //////////////////////////
+			fill(z.begin(), z.end(), 0);
+			C = 0;
+			for (int v=0; v<n; v++)
+			{
+				vector<int> E = adj_e[v];
+				double D_temp = D;
+				sort(E.begin(),E.end(), [&](int i,int j){return y[i]>y[j];} );
+				int j;
+				for (j=0; j < E.size() && D_temp > q; j++)
+				{
+					//cout << v << j << " " << E[j] << endl;
+					int edge = E[j];
+					if (e[edge][0] == v)
+					{
+						z[2*edge] = q;
+						z_avg[2*edge] += (double)q/iters;
+					}
+					else
+					{
+						z[2*edge + 1] = q;
+						z_avg[2*edge + 1] += (double)q/iters;
+					}
+					C += y[edge]*q;
+					D_temp -= q;
+				}
+				if (j < E.size())
+				{
+					//cout << v << j << " " << E[j] << endl;
+					int edge = E[j];
+					if (e[edge][0] == v)
+					{
+						z[2*edge] = D_temp;
+						z_avg[2*edge] += (double)D_temp/iters;
+					}
+					else
+					{
+						z[2*edge + 1] = D_temp;
+						z_avg[2*edge + 1] += (double)D_temp/iters;
+					}
+					C += y[edge]*D_temp;
+				}
+				/*cout << "z values" << endl; 
+				for (int j=0; j<2*m; j++)
+				{
+					cout << "  " << z[j];
+				}*/
+				
+				
+				
+			}
+
+			////////////////////////////////////////////////////////////////////////
+			double sum_y = 0;
+			for (int edge=0; edge < m; edge++)
+			{
+				sum_y += y[edge];
+			}
+			if (C < sum_y)
+			{
+				feasible = false;
+			}
+			else
+			{
+				for (int j=0; j<m; j++)
+				{
+					y[j] = y[j]*(1- 0.25*eps*(z[2*j]+z[2*j+1]));
+				}
+			}
+			/*cout << "y values" << endl; 
 			for (int j=0; j<m; j++)
 			{
-				y[j] = y[j]*(1- 0.25*eps*(z[2*j]+z[2*j+1]));
+				cout << "  " << y[j];
+			}*/
+			/*if (feasible)
+			{
+				cout << "Iteration: " << tt << "Feasible for D value: " << D << endl;
 			}
+			else
+			{
+				cout << "Iteration: " << tt << "Infeasible for D value: " << D << endl;
+			}*/
 		}
-		/*cout << "y values" << endl; 
-		for (int j=0; j<m; j++)
-		{
-			cout << "  " << y[j];
-		}*/
 		if (feasible)
 		{
-			cout << "Iteration: " << tt << "Feasible for D value: " << D << endl;
+			r = D;
+			density = D;
 		}
 		else
 		{
-			cout << "Iteration: " << tt << "Infeasible for D value: " << D << endl;
+			l = D;
 		}
-	}
+	}	
+	cout << "Maximum Subgraph Density estimate: " << density << endl;
 	return 0;
 }
