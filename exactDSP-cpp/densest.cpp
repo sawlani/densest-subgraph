@@ -45,7 +45,7 @@ int main(int argc, char **argv) {
     int *cliques = new int[m * k];
     for (int i = 0; i < m * k; ++i) {
         cin >> cliques[i]; cliques[i]--;
-printf("%d\n", cliques[i]);
+//printf("%d\n", cliques[i]);
     }
 
     int source = n + m;
