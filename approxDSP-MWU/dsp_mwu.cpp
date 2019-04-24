@@ -2,6 +2,7 @@
 #include <fstream>
 #include <string>
 #include <stdio.h>
+#include <math.h>
 #include <stdlib.h>
 #include <vector>   
 #include <queue> 
@@ -27,7 +28,7 @@ struct classcomp {
 int main(int argc, char** argv) {
 
 	int iters = atoi(argv[1]);
-	double eps = 1.0/iters;
+	double eps = 0.1;
 	string input_file = argv[2];
 	
 	string output_file;
@@ -70,55 +71,83 @@ int main(int argc, char** argv) {
 		adj_e[q].push_back(i);
 	}
 
-	double D = n; //change this
-	vector<double> y(m,1); //Initialize probability (dual) vector. Note that we are not scaling it to sum to 1.
+	/*for (int i = 0; i < n; i++)
+	{
+		cout << endl << "Nbrs of " << i << endl;
+		for (int j : adj_v[i])
+		{
+			cout << j << " ";
+		}
+
+		cout << endl << "Nbr edges of " << i << endl;
+		for (int j : adj_e[i])
+		{
+			cout << j << " ";
+		}
+	}*/
+
+	double D = 1.24; //change this
+	vector<double> y(m,1.0); //Initialize probability (dual) vector. Note that we are not scaling it to sum to 1.
 	int q=2;
 	double C;
-	vector<double> z(2*m); //Primal vector
-	vector<double> z_avg(2*m, 0);
+	vector<double> z(2*m,0.0); //Primal vector
+	vector<double> z_avg(2*m, 0.0);
 
 	for (int tt = 0; tt < iters && feasible; tt++) {
 		
 		///////////////////////////// INNER PROBLEM //////////////////////////
+		fill(z.begin(), z.end(), 0);
+		C = 0;
 		for (int v=0; v<n; v++)
 		{
-			z.clear();
 			vector<int> E = adj_e[v];
 			double D_temp = D;
-			C = 0;
 			sort(E.begin(),E.end(), [&](int i,int j){return y[i]>y[j];} );
 			int j;
-			for (j=0; D_temp > q; j++)
+			for (j=0; j < E.size() && D_temp > q; j++)
 			{
+				//cout << v << j << " " << E[j] << endl;
 				int edge = E[j];
 				if (e[edge][0] == v)
 				{
-					z[2*edge] == q;
+					z[2*edge] = q;
 					z_avg[2*edge] += (double)q/iters;
 				}
 				else
 				{
-					z[2*edge + 1] == q;
+					z[2*edge + 1] = q;
 					z_avg[2*edge + 1] += (double)q/iters;
 				}
 				C += y[edge]*q;
 				D_temp -= q;
 			}
-			int edge = E[j];
-			if (e[edge][0] == v)
+			if (j < E.size())
 			{
-				z[2*edge] == D_temp;
-				z_avg[2*edge] += (double)D_temp/iters;
+				//cout << v << j << " " << E[j] << endl;
+				int edge = E[j];
+				if (e[edge][0] == v)
+				{
+					z[2*edge] = D_temp;
+					z_avg[2*edge] += (double)D_temp/iters;
+				}
+				else
+				{
+					z[2*edge + 1] = D_temp;
+					z_avg[2*edge + 1] += (double)D_temp/iters;
+				}
+				C += y[edge]*D_temp;
 			}
-			else
+			/*cout << "z values" << endl; 
+			for (int j=0; j<2*m; j++)
 			{
-				z[2*edge + 1] == D_temp;
-				z_avg[2*edge + 1] += (double)D_temp/iters;
-			}
-			C += y[edge]*D_temp;
+				cout << "  " << z[j];
+			}*/
+			
+			
+			
 		}
-		////////////////////////////////////////////////////////////////////////
 
+		////////////////////////////////////////////////////////////////////////
 		double sum_y = 0;
 		for (int edge=0; edge < m; edge++)
 		{
@@ -135,12 +164,19 @@ int main(int argc, char** argv) {
 				y[j] = y[j]*(1- 0.25*eps*(z[2*j]+z[2*j+1]));
 			}
 		}
-
+		/*cout << "y values" << endl; 
+		for (int j=0; j<m; j++)
+		{
+			cout << "  " << y[j];
+		}*/
+		if (feasible)
+		{
+			cout << "Iteration: " << tt << "Feasible for D value: " << D << endl;
+		}
+		else
+		{
+			cout << "Iteration: " << tt << "Infeasible for D value: " << D << endl;
+		}
 	}
-
-	outfile << "Feasible for D value: " << D;
-
-
-
 	return 0;
 }
