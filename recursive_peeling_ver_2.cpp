@@ -159,39 +159,18 @@ int main(int argc, char** argv) {
 			m_ans = ans;
 			mm_density = max_density;
 		}
-		printf("Max density = %.12f (iteration %d)\n", max_density, tt);
+		printf("Max density = %.4f; (iteration %d)\n", max_density, tt);
 	}
 
-	vector<bool> insol(n, false);
-	for(int i : m_ans) insol[i] = true;
-	double maxdens=0;
-	int curedges=0;
-	for (int i = 0; i < n; i++)
-	{
-		if(insol[i] == false) continue;
-		for (int j : adj[i])
-		{
-			//outfile << j+1 << "is a neighbor of" << V[i]+1 << endl;
-			if (insol[j])
-			{
-				curedges++;
-			}
-		}
-	}
-	maxdens = curedges / 2. / m_ans.size();
-
-	//outfile << "Time: " << clock() << endl;
-	cerr << "Time: " << clock() << endl;
+	
 	//outfile << "Filename: " << input_file << endl;
-	//outfile << "Iterations: " << iters << endl;
-	//outfile << "Max load: " << w[V[0]] * eps << endl;
-	cerr << "Approximate maximum density: " << maxdens << endl;
-	cerr << "Approximate densest subgraph:" << endl;
-	outfile << m_ans.size() << endl;
+	cerr << "Approximate maximum density: " << mm_density << endl;
+	//cerr << "Approximate densest subgraph:" << endl;
+	/*outfile << m_ans.size() << endl;
 	for(int i : m_ans) 
 	{
 		outfile << i << endl;
-	}
+	}*/
 	////////////////////////
 	// If the solution is known, compute actual value of maximum density from solution file:
 	////////////////////////
