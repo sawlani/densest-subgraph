@@ -25,7 +25,7 @@ int n, m;
 int main(int argc, char** argv) {
 
 	int iters = atoi(argv[1]);
-	double eps = 1.0/iters;
+	//double eps = 1.0/iters;
 	string input_file = argv[2];
 	
 	string output_file;
@@ -48,7 +48,7 @@ int main(int argc, char** argv) {
 	cin >> n >> m;
 	vector<int> * adj = new vector<int>[n];
 	vector<int> * g = new vector<int>[n];
-	int LIM = 2 * m;
+	//int LIM = 2 * m;
 	list<pair<int, vector<int> > > ordered_deg;
 	vector<list<pair<int, vector<int> > >::iterator> itr(n);
 	vector<pair<int, int> > e;
@@ -65,8 +65,8 @@ int main(int argc, char** argv) {
 		adj[q].push_back(p);
 	}
 	vector<pair<int, int> > deg_sorted(n);
-
-	auto begin=clock();
+	vector<int> m_ans;
+	double mm_density = 0;
 	for (int tt = 0; tt < iters; tt++) {
 		//cout << tt << endl;
 		for (int i = 0; i < n; i++) {
@@ -92,7 +92,10 @@ int main(int argc, char** argv) {
 			itr[v]--;
 			pos[v] = itr[v]->second.size() - 1;
 		}
-		int min_deg = 0;
+		double max_density = (double)m / n;
+		int cur_m = m, cur_n = n;
+		vector<int> ans;
+		int max_size = 0;
 		while(ordered_deg.empty() == false) {
 			//cout << "??" << endl;
 			auto i = ordered_deg.begin();
@@ -107,8 +110,11 @@ int main(int argc, char** argv) {
 			}
 			w[k] = deg[k]; //increment vertex weight for the next iteration (self loops)
 			pos[k] = -1;
+			cur_n -= 1;
+			ans.push_back(k);
 			for (int j : g[k]) { //decrement degrees of k's neighbors
 				if(pos[j] == -1) continue;
+				cur_m -= 1;
 				//cout << k << "->" << j << ' ' << deg[j] << ' ' << pos[j] << endl;
 				//cout << "?" << ordered_deg[deg[j]].size()<< endl;
 				auto i = itr[j];
@@ -142,38 +148,28 @@ int main(int argc, char** argv) {
 				}
 				//cout << itr[j]->first << ' ' << deg[j] << ' ' << itr[j]->second[pos[j]] << ' ' << j << endl;
 			}
-			min_deg--;
-			if(min_deg < 0) min_deg = 0;
+			if(max_density < (double)cur_m / cur_n) {
+				max_size = ans.size();
+			}
+			max_density = max(max_density, (double)cur_m / cur_n);
 		}
+		reverse(ans.begin(), ans.end());
+		ans.resize(n - max_size);
+		if(max_density > mm_density) {
+			m_ans = ans;
+			mm_density = max_density;
+		}
+		printf("Max density = %.12f (iteration %d)\n", max_density, tt);
 	}
-
-	vector<int> V(n);
-	int x=0;
-	iota(V.begin(),V.end(),x++); //Initializing
-	sort(V.begin(),V.end(), [&](int i,int j){return w[i]>w[j];} );
-
-	/*for (int i = 0; i< n;i++)
-	{
-		outfile << w[i] << endl;
-		//outfile << V[i] << endl;
-	}
-	outfile << endl;
-	for (int i = 0; i< n;i++)
-	{
-		//outfile << w[i] << endl;
-		outfile << V[i] << endl;
-	}*/
 
 	vector<bool> insol(n, false);
-	vector<bool> dsg(n, false);
+	for(int i : m_ans) insol[i] = true;
 	double maxdens=0;
-	double curdens;
 	int curedges=0;
-	//insol[V[0]] = true;
-	int maxi = 0;
 	for (int i = 0; i < n; i++)
 	{
-		for (int j : adj[V[i]])
+		if(insol[i] == false) continue;
+		for (int j : adj[i])
 		{
 			//outfile << j+1 << "is a neighbor of" << V[i]+1 << endl;
 			if (insol[j])
@@ -181,30 +177,20 @@ int main(int argc, char** argv) {
 				curedges++;
 			}
 		}
-		insol[V[i]] = true;
-
-		curdens = double(curedges)/(i+1);
-		//outfile << endl << curdens << endl;
-		if (curdens > maxdens)
-		{
-			maxdens = curdens;
-			maxi = i;
-		}
 	}
+	maxdens = curedges / 2. / m_ans.size();
 
-	auto end = clock();
-	
-	cout << "Filename: " << input_file << endl;
-	cout << "Iterations: " << iters << endl;
-	cout << "Max load: " << double(w[V[0]])/iters << endl;
-	cout << "Time in seconds: " << float(end-begin) /  CLOCKS_PER_SEC << endl;  
-	cout << "Approximate maximum density: " << maxdens << endl;
-	
-	outfile << maxi + 1 << endl;
-	sort(V.begin(), V.begin() + maxi + 1);
-	for (int i = 0; i <= maxi;i++)
+	//outfile << "Time: " << clock() << endl;
+	cerr << "Time: " << clock() << endl;
+	//outfile << "Filename: " << input_file << endl;
+	//outfile << "Iterations: " << iters << endl;
+	//outfile << "Max load: " << w[V[0]] * eps << endl;
+	cerr << "Approximate maximum density: " << maxdens << endl;
+	cerr << "Approximate densest subgraph:" << endl;
+	outfile << m_ans.size() << endl;
+	for(int i : m_ans) 
 	{
-		outfile << V[i] + 1 << endl;
+		outfile << i << endl;
 	}
 	////////////////////////
 	// If the solution is known, compute actual value of maximum density from solution file:
@@ -216,6 +202,7 @@ int main(int argc, char** argv) {
 		int t;
 		cin >> t;
 		int a[n];
+		int x = 0;
 		for (int i = 0; i < t; i++) 
 			cin >> a[i];
 		for (int i = 0; i < n; i++) 
