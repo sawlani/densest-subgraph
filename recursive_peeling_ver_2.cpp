@@ -65,6 +65,8 @@ int main(int argc, char** argv) {
 		adj[q].push_back(p);
 	}
 	vector<pair<int, int> > deg_sorted(n);
+
+	auto begin=clock();
 	for (int tt = 0; tt < iters; tt++) {
 		//cout << tt << endl;
 		for (int i = 0; i < n; i++) {
@@ -190,16 +192,14 @@ int main(int argc, char** argv) {
 		}
 	}
 
-	//outfile << "Time: " << clock() << endl;
-	cerr << "Time: " << clock() << endl;
-	//outfile << "Filename: " << input_file << endl;
-	//outfile << "Iterations: " << iters << endl;
-	//outfile << "Max load: " << w[V[0]] * eps << endl;
-	cerr << "Approximate maximum density: " << maxdens << endl;
-	//outfile << "Approximate maximum density: " << maxdens << endl;
-	//outfile << "Approximate densest subgraph:" << endl;
-	//cerr << "Approximate densest subgraph:" << endl;
->>>>>>> 6873c13584ce81979c743e3d0424116d6870230b
+	auto end = clock();
+	
+	cout << "Filename: " << input_file << endl;
+	cout << "Iterations: " << iters << endl;
+	cout << "Max load: " << double(w[V[0]])/iters << endl;
+	cout << "Time in seconds: " << float(end-begin) /  CLOCKS_PER_SEC << endl;  
+	cout << "Approximate maximum density: " << maxdens << endl;
+	
 	outfile << maxi + 1 << endl;
 	sort(V.begin(), V.begin() + maxi + 1);
 	for (int i = 0; i <= maxi;i++)

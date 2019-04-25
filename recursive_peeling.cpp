@@ -71,6 +71,8 @@ int main(int argc, char** argv) {
 		adj[p].insert(q);
 		adj[q].insert(p);
 	}
+
+	auto begin = clock();
 	for (int tt = 0; tt < iters; tt++) {
 		//cout << tt << endl;
 		ordered_deg.clear();
@@ -145,11 +147,13 @@ int main(int argc, char** argv) {
 		}
 	}
 
+	auto end = clock();
 	
-	outfile << "Filename: " << input_file << endl;
-	outfile << "Iterations: " << iters << endl;
-	outfile << "Max load: " << w[V[0]] << endl;
-	outfile << "Approximate maximum density: " << maxdens << endl;
+	cout << "Filename: " << input_file << endl;
+	cout << "Iterations: " << iters << endl;
+	cout << "Max load: " << w[V[0]] << endl;
+	cout << "Time in seconds: " << float(end-begin) /  CLOCKS_PER_SEC << endl;  
+	cout << "Approximate maximum density: " << maxdens << endl;
 	//outfile << "Approximate densest subgraph:" << endl;
 
 	/*for (int i = 0; i< n;i++)
@@ -159,7 +163,7 @@ int main(int argc, char** argv) {
 			outfile << i << endl;
 		}
 	}*/
-	outfile << endl << endl;
+	//outfile << endl << endl;
 	////////////////////////
 	// If the solution is known, compute actual value of maximum density from solution file:
 	////////////////////////
