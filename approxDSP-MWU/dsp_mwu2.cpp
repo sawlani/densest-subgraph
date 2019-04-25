@@ -29,6 +29,7 @@ int main(int argc, char** argv) {
 
 	int iters = atoi(argv[1]);
 	double eps = 0.1;
+	double rho = 3.0;
 	string input_file = argv[2];
 	
 	string output_file;
@@ -87,20 +88,52 @@ int main(int argc, char** argv) {
 	}*/
 
 	double D = 1.24; //change this
-	vector<double> y(m,1.0); //Initialize probability (dual) vector. Note that we are not scaling it to sum to 1.
-	int q=2;
+	vector<double> x(n,1.0); //Initialize dual vector of the size of vertices. We are not scaling it to sum to 1.
+	//int q=2;
 	double C;
 	vector<double> z(2*m,0.0); //Primal vector
+	//vector<double> z_avg(2*m, 0.0);
+	vector<double> grad(n, 0.0);
 	vector<double> z_avg(2*m, 0.0);
+	vector<double> grad_avg(n, 0.0);
 
 	for (int tt = 0; tt < iters && feasible; tt++) {
 		
 		///////////////////////////// INNER PROBLEM //////////////////////////
+		//Here we computed z_ev. Now we want to compute inner problem as an iteration over all edges in m x 2
+		//matrix, denoted by variable 'e'. Then we also compute gradient estimate Bz \in \Rbb^n as we go along to
+		//save running time.
 		fill(z.begin(), z.end(), 0);
+		fill(grad.begin(), grad.end(), 0);
 		C = 0;
-		for (int v=0; v<n; v++)
+		fill(grad_avg.begin(), grad_avg.end(), 0);
+		for (int l=0; l<m; l++)
 		{
-			vector<int> E = adj_e[v];
+			if (x[e[l][0]] <= x[e[l][1]])
+			{
+				z[2*l] = 1;
+				z_avg[2*l] = (double)1/(tt+1) + ((double)tt/(tt+1))*z_avg[2*l];
+				z_avg[2*l+1] = ((double)tt/(tt+1))*z_avg[2*l+1];
+				C += x[e[l][0]];
+				grad[e[l][0]] += 1.0;
+			}
+			else
+			{
+				z[2*l+1] = 1;
+				z_avg[2*l+1] = (double)1/(tt+1) + ((double)tt/(tt+1))*z_avg[2*l+1];
+				z_avg[2*l] = ((double)tt/(tt+1))*z_avg[2*l];
+				C += x[e[l][1]];
+				grad[e[l][1]] += 1.0;
+			}
+			grad_avg[e[l][0]] += z_avg[2*l];
+			grad_avg[e[l][1]] += z_avg[2*l+1];
+			/*cout << "Values of avg z: ";
+			for (int t = 0; t < z_avg.size(); t++)
+			{
+				cout << z_avg[t] << " ";
+			}
+			cout << endl;*/
+			/*vector<int> E = adj_e[v];
 			double D_temp = D;
 			sort(E.begin(),E.end(), [&](int i,int j){return y[i]>y[j];} );
 			int j;
@@ -136,7 +169,7 @@ int main(int argc, char** argv) {
 					z_avg[2*edge + 1] += (double)D_temp/iters;
 				}
 				C += y[edge]*D_temp;
-			}
+			}*/
 			/*cout << "z values" << endl; 
 			for (int j=0; j<2*m; j++)
 			{
@@ -147,28 +180,29 @@ int main(int argc, char** argv) {
 			
 		}
 
-		////////////////////////////////////////////////////////////////////////
-		double sum_y = 0;
-		for (int edge=0; edge < m; edge++)
+		//////////////////////////////////////////////////////////////////////// 
+		/*double sum_x = 0;
+		for (int v=0; v < m; v++)
 		{
-			sum_y += y[edge];
+			sum_x += x[v];
 		}
-		if (C < sum_y)
+		double avg_den = C/sum_x;
+		cout << "Average density estimate for iteration "<<tt <<" = " << avg_den << endl;*/
+		double den_est = *max_element(grad_avg.begin(), grad_avg.end());
+		cout << "Density estimate for iteration "<<tt <<" = " << den_est << endl;
+		/*if (C < sum_y)
 		{
 			feasible = false;
-		}
-		else
+		}*/
+		for (int v=0; v<n; v++)
 		{
-			for (int j=0; j<m; j++)
-			{
-				y[j] = y[j]*(1- 0.25*eps*(z[2*j]+z[2*j+1]));
-			}
+			x[v] = x[v]*(1 +  0.25*eps/rho *grad[v]);
 		}
 		/*cout << "y values" << endl; 
 		for (int j=0; j<m; j++)
 		{
 			cout << "  " << y[j];
-		}*/
+		}
 		if (feasible)
 		{
 			cout << "Iteration: " << tt << "Feasible for D value: " << D << endl;
@@ -176,7 +210,7 @@ int main(int argc, char** argv) {
 		else
 		{
 			cout << "Iteration: " << tt << "Infeasible for D value: " << D << endl;
-		}
+		}*/
 	}
 	return 0;
 }
