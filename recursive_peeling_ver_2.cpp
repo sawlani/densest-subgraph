@@ -195,6 +195,7 @@ int main(int argc, char** argv) {
 	//outfile << "Filename: " << input_file << endl;
 	//outfile << "Iterations: " << iters << endl;
 	//outfile << "Max load: " << w[V[0]] * eps << endl;
+	cerr << "Approximate maximum density: " << maxdens << endl;
 	//outfile << "Approximate maximum density: " << maxdens << endl;
 	//outfile << "Approximate densest subgraph:" << endl;
 	outfile << maxi + 1 << endl;
