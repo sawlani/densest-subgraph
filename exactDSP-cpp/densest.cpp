@@ -45,8 +45,10 @@ int main(int argc, char **argv) {
     int *cliques = new int[m * k];
     for (int i = 0; i < m * k; ++i) {
         cin >> cliques[i]; cliques[i]--;
-printf("%d\n", cliques[i]);
+		//printf("%d\n", cliques[i]);
     }
+
+    auto begin = clock();
 
     int source = n + m;
     int sink = n + m + 1;
@@ -99,7 +101,7 @@ printf("%d\n", cliques[i]);
     node *j;
     while (l < r) {
         int c = (l + r + 1) / 2;
-        cerr << "[" << l << ", " << r << "] " << c << endl;
+        //cerr << "[" << l << ", " << r << "] " << c << endl;
         for (int i = 0; i < n; ++i) {
             cap[nodes_[source].first - arcs + i] = c;
         }
@@ -125,7 +127,9 @@ printf("%d\n", cliques[i]);
 
     }
     
-    cerr << "Density is " << l << endl;
+    auto end = clock();
+
+    cerr << "Density is " << (double)l/ACCURACY << endl;
 
     cerr << "subgraph:\n";
     for (vector<long>::iterator v = subg.begin(); v != subg.end(); ++v) {
@@ -133,6 +137,7 @@ printf("%d\n", cliques[i]);
 //        cout << *v << " ";
     }
     cerr << endl;
+    cerr << "Time taken in seconds: " << float(end-begin) /  CLOCKS_PER_SEC << endl;
     cout << endl;
 
     /*
