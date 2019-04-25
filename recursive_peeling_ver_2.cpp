@@ -40,7 +40,7 @@ inline char GET_CHAR(){
 inline int getInt() {
 	int res(0);
 	char c = getchar();
-	while(c < '0') c = getchar();
+	while(c < '0') c = GET_CHAR();
 	while(c >= '0') {
 		res = res * 10 + (c - '0');
 		c = getchar();
@@ -121,6 +121,7 @@ int main(int argc, char** argv) {
 	memset(w, 0, sizeof(int) * n);//initial vertex weights=0, i.e., no self loops at the start 
 	memset(pos, 0, sizeof(int) * n);
 	prv = new int[n]; nxt = new int[n];
+	cout << clock() << endl;
 	for (int i = 0; i < m; i++) {
 		int p, q;
 		p = getInt();
@@ -132,29 +133,45 @@ int main(int argc, char** argv) {
 		init_deg[p]++;
 		init_deg[q]++;
 	}
-	pair<int, int> * deg_sorted = new pair<int, int>[n];
+	cout << clock() << endl;
 	vector<int> m_ans;
 	double mm_density = 0;
-
+	int sizeofcnt = 2 * iters * n + 10;
+	int * cnt = new int[sizeofcnt],  * o = new int[n], * nwo = new int[n];
 	for (int tt = 0; tt < iters; tt++) {
 		//cout << tt << endl;
+		memset(cnt, 0, sizeof(int) * sizeofcnt);
+		//cout << clock() << endl;
 		for (int i = 0; i < n; i++) {
 			nxt[i] = prv[i] = -1;
 			pos[i] = 0;
 			//cout << w[i] << ' ' << init_deg[i] << endl;
 			deg[i] = w[i] + init_deg[i]; //degree for this iteration is "vertex weight" + actual degree
-			deg_sorted[i] = make_pair(deg[i], i);
+			o[i] = i;
+			cnt[deg[i]]++;
 		}
-		sort(deg_sorted, deg_sorted + n);
+		{
+			for(int i = 1; i < sizeofcnt; i++) cnt[i] = cnt[i - 1] + cnt[i];
+			for(int i = 0; i < n; i++) o[--cnt[deg[i]]] = i;		
+			/*memset(cnt, 0, sizeof(int) * sizeofcnt);
+			for(int i = 0; i < n; i++) {
+				cnt[deg[i] / (n * 2)]++;
+			}
+			for(int i = 1; i < sizeofcnt; i++) cnt[i] = cnt[i - 1] + cnt[i];
+			for(int i = n - 1; i >= 0; i--) nwo[--cnt[deg[o[i]] / (n * 2)]] = o[i];
+			for(int i = 0; i < n; i++) o[i] = nwo[i];*/
+		}
 		n_list = 0;
+		//cout << clock() << '?' << endl;
 
 		for(int i = 0; i < n; i++) {
-			int v = deg_sorted[i].second;
-			if(n_list == 0 || lists[n_list].deg != deg_sorted[i].first) {
+			int v = o[i];
+
+			if(n_list == 0 || lists[n_list].deg != deg[v]) {
 				++n_list;
 				lists[n_list].clear();
 				linklists(n_list - 1, n_list);
-				lists[n_list].deg = deg_sorted[i].first;
+				lists[n_list].deg = deg[v];
 			}
 			//printf("%d %d %d %d %d\n", v, lists[n_list].idx, deg[v], w[v], init_deg[v]);
 			linknodes(v, lists[n_list].idx);
@@ -226,33 +243,12 @@ int main(int argc, char** argv) {
 		//printf("Max density = %.12f (iteration %d)\n", max_density, tt);
 	}
 
-	vector<bool> insol(n, false);
-	for(int i : m_ans) insol[i] = true;
-	double maxdens=0;
-	int curedges=0;
-	for (int i = 0; i < n; i++)
-	{
-		if(insol[i] == false) continue;
-		for (int p = idx[i]; p; p = edges[p].next)
-		{
-			int j = edges[p].y;
-
-			//outfile << j+1 << "is a neighbor of" << V[i]+1 << endl;
-			if (insol[j])
-			{
-				curedges++;
-			}
-		}
-	}
-	if(m_ans.size() == 0) m_ans.push_back(1);
-	maxdens = curedges / 2. / m_ans.size();
-
 	//outfile << "Time: " << clock() << endl;
 	cerr << "Time: " << clock() << endl;
 	//outfile << "Filename: " << input_file << endl;
 	//outfile << "Iterations: " << iters << endl;
 	//outfile << "Max load: " << w[V[0]] * eps << endl;
-	cerr << "Approximate maximum density: " << maxdens << endl;
+	cerr << "Approximate maximum density: " << mm_density << endl;
 	cerr << "Approximate densest subgraph:" << endl;
 	outfile << m_ans.size() << endl;
 	for(int i : m_ans) 
