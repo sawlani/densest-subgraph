@@ -1,0 +1,21 @@
+Time: 0
+Filename: tests/50
+Iterations: 10
+Max load: 1.8
+Approximate maximum density: 1.66667
+
+
+Time: 0
+Filename: tests/50
+Iterations: 10
+Max load: 1.8
+Approximate maximum density: 1.66667
+
+
+Time: 0
+Filename: tests/50
+Iterations: 10
+Max load: 1.8
+Approximate maximum density: 1.66667
+
+
