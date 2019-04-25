@@ -82,7 +82,7 @@ int main(int argc, char** argv) {
 		sort(deg_sorted.begin(), deg_sorted.end());
 		for(int i = 0; i < n; i++) {
 			int v = deg_sorted[i].second;
-			if(deg_sorted[i].first != ordered_deg.back().first) {
+			if(ordered_deg.empty() || deg_sorted[i].first != ordered_deg.back().first) {
 				ordered_deg.push_back(make_pair(deg_sorted[i].first, vector<int>()));
 			}
 			ordered_deg.back().second.push_back(v);
@@ -195,8 +195,8 @@ int main(int argc, char** argv) {
 	//outfile << "Filename: " << input_file << endl;
 	//outfile << "Iterations: " << iters << endl;
 	//outfile << "Max load: " << w[V[0]] * eps << endl;
-	//outfile << "Approximate maximum density: " << maxdens << endl;
-	//outfile << "Approximate densest subgraph:" << endl;
+	cerr << "Approximate maximum density: " << maxdens << endl;
+	cerr << "Approximate densest subgraph:" << endl;
 	outfile << maxi + 1 << endl;
 	sort(V.begin(), V.begin() + maxi + 1);
 	for (int i = 0; i <= maxi;i++)
