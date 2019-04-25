@@ -6,6 +6,7 @@
 #include<cassert>
 #include <vector>   
 #include <queue> 
+#include<list>
 #include <set>
 #include<ctime>
 #include <unordered_set>
@@ -47,12 +48,11 @@ int main(int argc, char** argv) {
 	cin >> n >> m;
 	vector<int> * adj = new vector<int>[n];
 	vector<int> * g = new vector<int>[n];
-	vector<int> * ordered_deg = new vector<int> [m + 1];
+	int LIM = 2 * m;
+	list<pair<int, vector<int> > > ordered_deg;
+	vector<list<pair<int, vector<int> > >::iterator> itr(n);
 	vector<pair<int, int> > e;
-	vector<int> deg, w, pos;
-	w.resize(n);
-	deg.resize(n);
-	pos.resize(n);
+	vector<int> deg(n), w(n), pos(n);
 	for (int i = 0; i < n; i++) 
 		w[i] = 0; //initial vertex weights=0, i.e., no self loops at the start
 	for (int i = 0; i < m; i++) {
@@ -64,53 +64,81 @@ int main(int argc, char** argv) {
 		adj[p].push_back(q);
 		adj[q].push_back(p);
 	}
+	vector<pair<int, int> > deg_sorted(n);
 	for (int tt = 0; tt < iters; tt++) {
-		cout << tt << endl;
+		//cout << tt << endl;
 		for (int i = 0; i < n; i++) {
 			deg[i] = w[i]; //degree for this iteration is "vertex weight" + actual degree
 			g[i] = adj[i];
-		} 
+			//cout << w[i] << endl;
+		}
 		for (int i = 0; i < m; i++) {
 			deg[e[i].first]++;
 			deg[e[i].second]++;
-			assert(ordered_deg[i].empty());
 		}
+		for(int i(0); i < n; i++) {
+			deg_sorted[i] = make_pair(deg[i], i);
+		}
+		sort(deg_sorted.begin(), deg_sorted.end());
 		for(int i = 0; i < n; i++) {
-			ordered_deg[deg[i]].push_back(i);
-			pos[i] = (int)ordered_deg[deg[i]].size() - 1;
+			int v = deg_sorted[i].second;
+			if(deg_sorted[i].first != ordered_deg.back().first) {
+				ordered_deg.push_back(make_pair(deg_sorted[i].first, vector<int>()));
+			}
+			ordered_deg.back().second.push_back(v);
+			itr[v] = ordered_deg.end();
+			itr[v]--;
+			pos[v] = itr[v]->second.size() - 1;
 		}
 		int min_deg = 0;
-		//cout <<deg[1971235] << ' ' << pos[1971235] << '!' << ordered_deg[deg[1971235]][pos[1971235]] << endl;
-		for(int _ = 0; _ < n; _++) {
-			// cout << _ << endl;
-			//cout << tt << ' ' << min_deg << endl;
-			for( ; min_deg <= m && ordered_deg[min_deg].empty(); ) {
-				min_deg++;
-			}
-			if(min_deg > m) break;
-			//)cout << "min" << min_deg << ' ' << ordered_deg[min_deg].size() << endl;
-			int k = ordered_deg[min_deg][0];//k = min degree vertex
-			//cout << "k" << k << endl;
-			// cout << "!!!!" << endl;
-			int swp = ordered_deg[min_deg].back();
-			ordered_deg[min_deg][0] = ordered_deg[min_deg].back();
+		while(ordered_deg.empty() == false) {
+			//cout << "??" << endl;
+			auto i = ordered_deg.begin();
+			int k = i->second[0];//k = min degree vertex
+			//cout << "k = " << k << ' ' << i->first << '!' << deg[k] << endl;
+			int swp = i->second.back();
+			i->second[0] = i->second.back();
 			pos[swp] = 0;
-			ordered_deg[min_deg].pop_back(); //delete k
-			//cout << ordered_deg[min_deg].size() << endl;
+			i->second.pop_back(); //delete k
+			if(i->second.empty()) {
+				ordered_deg.erase(i);
+			}
 			w[k] = deg[k]; //increment vertex weight for the next iteration (self loops)
 			pos[k] = -1;
 			for (int j : g[k]) { //decrement degrees of k's neighbors
 				if(pos[j] == -1) continue;
 				//cout << k << "->" << j << ' ' << deg[j] << ' ' << pos[j] << endl;
-				// cout << ordered_deg[deg[j]].size()<< endl;
-				int swp = ordered_deg[deg[j]].back();
-				ordered_deg[deg[j]][pos[j]] = ordered_deg[deg[j]].back();
+				//cout << "?" << ordered_deg[deg[j]].size()<< endl;
+				auto i = itr[j];
+				int swp = i->second.back();
+				i->second[pos[j]] = i->second.back();
 				pos[swp] = pos[j];
-				assert(ordered_deg[deg[j]].size());
-				ordered_deg[deg[j]].pop_back();
+				assert(i->second.size());
+				i->second.pop_back();
+				if(i->second.empty()) {
+					ordered_deg.erase(i++);
+				}
 				deg[j]--;
-				ordered_deg[deg[j]].push_back(j);
-				pos[j] = (int)ordered_deg[deg[j]].size() - 1;
+				bool flag = false;
+				if(i == ordered_deg.begin()) {
+					flag = true;
+				}else {
+					auto k = i;
+					k--;
+					if(k->first != deg[j]) {
+						flag = true;
+					}
+				}
+				if(flag) {
+					itr[j] = ordered_deg.insert(i, make_pair(deg[j], vector<int>(1, j)));
+					pos[j] = 0;
+				}else {
+					i--;
+					itr[j] = i;
+					i->second.push_back(j);
+					pos[j] = i->second.size() - 1;
+				}
+				//cout << itr[j]->first << ' ' << deg[j] << ' ' << itr[j]->second[pos[j]] << ' ' << j << endl;
 			}
 			min_deg--;
 			if(min_deg < 0) min_deg = 0;
@@ -140,6 +168,7 @@ int main(int argc, char** argv) {
 	double curdens;
 	int curedges=0;
 	//insol[V[0]] = true;
+	int maxi = 0;
 	for (int i = 0; i < n; i++)
 	{
 		for (int j : adj[V[i]])
@@ -157,26 +186,23 @@ int main(int argc, char** argv) {
 		if (curdens > maxdens)
 		{
 			maxdens = curdens;
-			dsg = insol;
+			maxi = i;
 		}
 	}
 
-	outfile << "Time: " << clock() << endl;
+	//outfile << "Time: " << clock() << endl;
 	cerr << "Time: " << clock() << endl;
-	outfile << "Filename: " << input_file << endl;
-	outfile << "Iterations: " << iters << endl;
-	outfile << "Max load: " << w[V[0]] * eps << endl;
-	outfile << "Approximate maximum density: " << maxdens << endl;
+	//outfile << "Filename: " << input_file << endl;
+	//outfile << "Iterations: " << iters << endl;
+	//outfile << "Max load: " << w[V[0]] * eps << endl;
+	//outfile << "Approximate maximum density: " << maxdens << endl;
 	//outfile << "Approximate densest subgraph:" << endl;
-
-	/*for (int i = 0; i< n;i++)
+	outfile << maxi + 1 << endl;
+	sort(V.begin(), V.begin() + maxi + 1);
+	for (int i = 0; i <= maxi;i++)
 	{
-		if (dsg[i])
-		{
-			outfile << i << endl;
-		}
-	}*/
-	outfile << endl << endl;
+		outfile << V[i] + 1 << endl;
+	}
 	////////////////////////
 	// If the solution is known, compute actual value of maximum density from solution file:
 	////////////////////////
