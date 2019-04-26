@@ -28,16 +28,16 @@ struct classcomp {
 int main(int argc, char** argv) {
 
 	int iters = atoi(argv[1]);
-	double eps = 0.1;
-	double rho = 3.0;
-	string input_file = argv[2];
+	double eps = atof(argv[2]);
+	double rho = 0.0; //Initialization of rho values
+	string input_file = argv[3];
 	
 	string output_file;
 	ofstream outfile;
 
-	if (argc >= 4)
+	if (argc >= 5)
 	{
-		output_file = argv[3];
+		output_file = argv[4];
 	}
 	else
 	{
@@ -71,6 +71,18 @@ int main(int argc, char** argv) {
 		adj_e[p].push_back(i);
 		adj_e[q].push_back(i);
 	}
+	
+	// Calculate rho, ie max degree
+	for (int v = 0; v < n; v++)
+	{
+		if(adj_e[v].size() > rho)
+		{
+			rho = (double)adj_e[v].size(); //choose max degree vertex as value for rho
+		}
+	}
+	cout << "Value of rho = " << rho << endl;
+	cout << "Value of eps = " << eps << endl;
+
 
 	/*for (int i = 0; i < n; i++)
 	{
