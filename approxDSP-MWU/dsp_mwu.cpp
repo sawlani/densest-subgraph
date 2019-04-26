@@ -27,9 +27,9 @@ struct classcomp {
 
 int main(int argc, char** argv) {
 
-	int iters = atoi(argv[1]);
-	double eps = atof(argv[2]);
-	string input_file = argv[3];
+	double eps = atof(argv[1]);
+	string input_file = argv[2];
+	int iters = atoi(argv[3]);
 	
 	string output_file;
 	ofstream outfile;
@@ -89,10 +89,12 @@ int main(int argc, char** argv) {
 	double l = 0, r = m, D, density;
 	bool feasible;
 	int k=0;
+	int tot_iters=0;
+	int tt =0;
 
-	while (l < r - eps && k<20)
+	while (l/r < (1 - eps))
 	{
-		k++;
+		//k++;
 		feasible = true;
 		D = (l+r)/2;
 		//cout << l << " " << D << " " << r << endl;
@@ -102,8 +104,9 @@ int main(int argc, char** argv) {
 		vector<double> z(2*m,0.0); //Primal vector
 		vector<double> z_avg(2*m, 0.0);
 
-		for (int tt = 0; tt < iters && feasible; tt++) {
-			
+		for (tt = 0; tt < iters && feasible; tt++) 
+		{
+			//cout << "current val of tt: "<<  tt << endl;
 			///////////////////////////// INNER PROBLEM //////////////////////////
 			fill(z.begin(), z.end(), 0);
 			C = 0;
@@ -187,16 +190,22 @@ int main(int argc, char** argv) {
 				cout << "Iteration: " << tt << "Infeasible for D value: " << D << endl;
 			}*/
 		}
+		//cout << "Val of tt after for loop: " << tt << endl;
+		tot_iters += tt;
 		if (feasible)
 		{
 			r = D;
 			density = D;
+			cout << "feasible and r: " << r << endl;
 		}
 		else
 		{
 			l = D;
+			cout << "infeasible and l: " << l << endl;
 		}
-	}	
+	}
+	//tot_iters = k*iters;	
 	cout << "Maximum Subgraph Density estimate: " << density << endl;
+	cout << "Number of inner iterations: "<< tot_iters <<endl;
 	return 0;
 }

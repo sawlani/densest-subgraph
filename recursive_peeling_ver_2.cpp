@@ -13,6 +13,7 @@
 #include <unordered_set>
 #include <algorithm>
 #include <numeric>
+#include <iomanip>
 using namespace std;
 
 
@@ -39,11 +40,11 @@ inline char GET_CHAR(){
 }
 inline int getInt() {
 	int res(0);
-	char c = getchar();
+	char c = GET_CHAR();
 	while(c < '0') c = GET_CHAR();
 	while(c >= '0') {
 		res = res * 10 + (c - '0');
-		c = getchar();
+		c = GET_CHAR();
 	}
 	return res;
 }
@@ -83,10 +84,10 @@ __inline void build(int x, int y) {
 	
 int main(int argc, char** argv) {
 
+  
 	int iters = atoi(argv[1]);
 	//double eps = 1.0/iters;
 	string input_file = argv[2];
-
 	string output_file;
 	ofstream outfile;
 
@@ -100,10 +101,11 @@ int main(int argc, char** argv) {
 	}
 	//string st1 ("tests/"+ss);
 	//string st2 ("tests/"+ss+".a");
-
+	
 	freopen (input_file.c_str(), "r", stdin); //input file
 	//freopen (output_file.c_str(), "a", stdout); //output file
 	outfile.open(output_file.c_str(), ios_base::app);
+	auto begin = clock();
 	n = getInt(); m = getInt();
 	edges = new Edge[m * 2 + 10];
 	idx = new int[n];
@@ -121,7 +123,8 @@ int main(int argc, char** argv) {
 	memset(w, 0, sizeof(int) * n);//initial vertex weights=0, i.e., no self loops at the start 
 	memset(pos, 0, sizeof(int) * n);
 	prv = new int[n]; nxt = new int[n];
-	cout << clock() << endl;
+	//cout << clock() << endl;
+	//outfile << clock() << endl;
 	for (int i = 0; i < m; i++) {
 		int p, q;
 		p = getInt();
@@ -133,9 +136,12 @@ int main(int argc, char** argv) {
 		init_deg[p]++;
 		init_deg[q]++;
 	}
-	cout << clock() << endl;
+	//cout << clock() << endl;
+	outfile << "Test dataset: " << input_file << endl;
+	outfile << "I/O finishes: " << float(clock()-begin) /  CLOCKS_PER_SEC << endl;
 	vector<int> m_ans;
 	double mm_density = 0;
+	double gr_density = 0;
 	int sizeofcnt = 2 * iters * n + 10;
 	int * cnt = new int[sizeofcnt],  * o = new int[n], * nwo = new int[n];
 	for (int tt = 0; tt < iters; tt++) {
@@ -240,21 +246,26 @@ int main(int argc, char** argv) {
 			m_ans = ans;
 			mm_density = max_density;
 		}
-		//printf("Max density = %.12f (iteration %d)\n", max_density, tt);
+		if (tt==0) gr_density = mm_density;
+		outfile <<  tt << ", " << std::setprecision(12) << mm_density << endl;
+		//		printf("Max density = %.12f (iteration %d)\n", mm_density, tt);
+		outfile << "Time: " << float(clock()-begin) /  CLOCKS_PER_SEC << endl;
+	
 	}
-
+	cerr << "Improvement over greedy: " << float((mm_density - gr_density)*100/gr_density) << "%" << endl;
+		outfile << "Improvement over greedy: " << float((mm_density - gr_density)/gr_density) << endl;
 	//outfile << "Time: " << clock() << endl;
-	cerr << "Time: " << clock() << endl;
+
 	//outfile << "Filename: " << input_file << endl;
 	//outfile << "Iterations: " << iters << endl;
 	//outfile << "Max load: " << w[V[0]] * eps << endl;
-	cerr << "Approximate maximum density: " << mm_density << endl;
-	cerr << "Approximate densest subgraph:" << endl;
-	outfile << m_ans.size() << endl;
-	for(int i : m_ans) 
-	{
-		outfile << i << endl;
-	}
+	//cerr << "Approximate maximum density: " << mm_density << endl;
+	//cerr << "Approximate densest subgraph:" << endl;
+	//outfile << m_ans.size() << endl;
+	//for(int i : m_ans) 
+	//{
+	//	outfile << i << endl;
+	//}
 	////////////////////////
 	// If the solution is known, compute actual value of maximum density from solution file:
 	////////////////////////
