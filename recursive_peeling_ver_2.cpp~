@@ -39,11 +39,11 @@ inline char GET_CHAR(){
 }
 inline int getInt() {
 	int res(0);
-	char c = GET_CHAR();
+	char c = getchar();
 	while(c < '0') c = GET_CHAR();
 	while(c >= '0') {
 		res = res * 10 + (c - '0');
-		c = GET_CHAR();
+		c = getchar();
 	}
 	return res;
 }
