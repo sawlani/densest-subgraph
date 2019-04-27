@@ -247,11 +247,12 @@ int main(int argc, char** argv) {
 			mm_density = max_density;
 		}
 		if (tt==0) gr_density = mm_density;
-		outfile <<  tt << ", " << std::setprecision(12) << mm_density << endl;
+		outfile <<  float(clock()-begin) /  CLOCKS_PER_SEC  << ", " << std::setprecision(12) << mm_density << endl;
 		//		printf("Max density = %.12f (iteration %d)\n", mm_density, tt);
-		outfile << "Time: " << float(clock()-begin) /  CLOCKS_PER_SEC << endl;
+		//		outfile << "Time: " << float(clock()-begin) /  CLOCKS_PER_SEC << endl;
 	
 	}
+	cerr << "Total time: " << float(clock()-begin) /  CLOCKS_PER_SEC << endl;
 	cerr << "Improvement over greedy: " << float((mm_density - gr_density)*100/gr_density) << "%" << endl;
 		outfile << "Improvement over greedy: " << float((mm_density - gr_density)/gr_density) << endl;
 	//outfile << "Time: " << clock() << endl;

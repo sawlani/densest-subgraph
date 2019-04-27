@@ -3,11 +3,26 @@ extern "C" {
 }
 
 //#include <bits/stdc++.h>
-#include <iostream> 
+#include <iostream>
+#include <fstream>
+#include <string>
+#include <stdio.h>
+#include <stdlib.h>
+#include<cassert>
+#include <vector>   
+#include <queue> 
+#include<list>
+#include <set>
+#include<cstring>
+#include<ctime>
+#include <unordered_set>
+#include <algorithm>
+#include <numeric>
+#include <iomanip>
 #include <vector> 
 #include <cmath> 
-
 using namespace std;
+
 
 const int INF = (int)1e9;
 
@@ -32,24 +47,63 @@ bool nontrivial(int n_nodes, node *nodes) {
     return res > 1;
 }
 
+inline char GET_CHAR(){
+	const int maxn = 131072;
+	static char buf[maxn],*p1=buf,*p2=buf;
+	return p1==p2&&(p2=(p1=buf)+fread(buf,1,maxn,stdin),p1==p2)?EOF:*p1++;
+}
+inline int getInt() {
+	int res(0);
+	char c = GET_CHAR();
+	while(c < '0') c = GET_CHAR();
+	while(c >= '0') {
+		res = res * 10 + (c - '0');
+		c = GET_CHAR();
+	}
+	return res;
+}
+
 int main(int argc, char **argv) {
 //THIS NUMBER DETERMINES HOW MANY DECIMALS WE COMPUTE THINGS TO
 //  HI_PR ONLY TAKES INTEGER CAPACITIES
 //    SO WE CAN'T PUT FRACTIONALS, INSTEAD, JUST MULTIPLY EVERYTHING BY 100 OR 1000...
-    int ACCURACY = 10;
+    int ACCURACY = atoi(argv[1]);
  
+    string input_file = argv[2];
+    string output_file;
+    ofstream outfile;
+    if (argc >= 4)
+	{
+		output_file = argv[3];
+	}
+	else
+	{
+		output_file = "results/results_exact.txt";
+	}
+	//string st1 ("tests/"+ss);
+	//string st2 ("tests/"+ss+".a");
+	
+    freopen (input_file.c_str(), "r", stdin); //input file
+    //freopen (output_file.c_str(), "a", stdout); //output file
+    outfile.open(output_file.c_str(), ios_base::app);
+    
+    
+    auto begin = clock();
     int n, m;
     int k = 2; ///EDGES CASE!
-    scanf("%d%d", &n, &m);
+    n = getInt(); m = getInt();
+
 
     int *cliques = new int[m * k];
     for (int i = 0; i < m * k; ++i) {
-        cin >> cliques[i]; cliques[i]--;
+      cliques[i]=getInt(); cliques[i]--;
 		//printf("%d\n", cliques[i]);
     }
 
-    auto begin = clock();
 
+    outfile << "Test dataset: " << input_file << endl;
+    outfile << "I/O finishes: " << float(clock()-begin) /  CLOCKS_PER_SEC << endl;
+   
     int source = n + m;
     int sink = n + m + 1;
     int n_nodes = n + m + 2;
@@ -96,7 +150,7 @@ int main(int argc, char **argv) {
 
     // upper and lower bound on density
     int l = 0, r = m * ACCURACY;
-    
+    //    cerr << "start" << endl;
     vector<long> subg;
     node *j;
     while (l < r) {
@@ -129,16 +183,17 @@ int main(int argc, char **argv) {
     
     auto end = clock();
 
-    cerr << "Density is " << (double)l/ACCURACY << endl;
+    outfile << "Density is " << (double)l/ACCURACY << endl;
 
-    cerr << "subgraph:\n";
+    /*outfile << "subgraph:\n";
     for (vector<long>::iterator v = subg.begin(); v != subg.end(); ++v) {
         cerr << (*v + 1) << " ";
 //        cout << *v << " ";
-    }
-    cerr << endl;
+}
+cerr << endl;*/
+    outfile << "Time taken in seconds: " << float(end-begin) /  CLOCKS_PER_SEC << endl;
     cerr << "Time taken in seconds: " << float(end-begin) /  CLOCKS_PER_SEC << endl;
-    cout << endl;
+    // cout << endl;
 
     /*
     node nodes[3];
