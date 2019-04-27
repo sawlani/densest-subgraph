@@ -1,5 +1,5 @@
 for f in datasets/*.txt
 do
-  echo ===running on===$f
-  time $1 $2 $f
+    echo ===running on===$f
+    time ./dsp 20 $f "${f/%txt/out}"
 done
