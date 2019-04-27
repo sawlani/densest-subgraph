@@ -4,7 +4,7 @@ import os
 for file in os.listdir(os.getcwd()):
     filename = os.path.splitext(file)[0]
     ext = os.path.splitext(file)[1]
-    print(ext)
+    print(file)
     if (ext == '.snap'):
         f=open(filename + ".txt", "w+")
         G = nx.read_edgelist(file)
