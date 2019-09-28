@@ -248,7 +248,7 @@ int main(int argc, char** argv) {
   maxdens = curedges / 2. / m_ans.size();
 
   //outfile << "Time: " << clock() << endl;
-  cerr << "Time: " << clock() << endl;
+  //cerr << "Time: " << clock() << endl;
   //outfile << "Filename: " << input_file << endl;
   //outfile << "Iterations: " << iters << endl;
   //outfile << "Max load: " << w[V[0]] * eps << endl;

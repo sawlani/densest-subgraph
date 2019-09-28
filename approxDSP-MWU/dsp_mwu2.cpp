@@ -46,7 +46,6 @@ int main(int argc, char** argv) {
 	
 	freopen (input_file.c_str(), "r", stdin); //input file
 	outfile.open(output_file.c_str(), ios_base::app); //output file
-	
 	cin >> n >> m;
 	vector<int> adj_e[n];
 	unordered_set<int> adj_v[n];
@@ -54,7 +53,7 @@ int main(int argc, char** argv) {
 	
 	w.reserve(n);
 	deg.reserve(n);
-
+	cerr << "Hi";
 	bool feasible = true;
 
 	for (int i = 0; i < n; i++) 

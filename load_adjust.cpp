@@ -5,58 +5,72 @@ using namespace std;
 const int maxn = 100;
 const int maxm = 1000;
 
-bool g[maxn][maxn];
 int e[maxm][2];
 double r[maxm];
-double l[maxn];
+double load[maxn];
 int n, m;
-double eps = 0.03;
+double eps = 0.01;
 
 int main() {
-	freopen ("test.in", "r", stdin);
-	freopen ("test.out", "w", stdout);
+	
 	cin >> n >> m;
-	for (int i = 0; i < n; i++)
-		for (int j = 0; j < n; j++)
-			g[i][j] = false;
-	for (int i = 0; i < n; i++)
-		l[i] = 0;
+	
+	for (int i = 0; i < n+1; i++)
+		load[i] = 0; // loads on vertices
 	for (int i = 0; i < m; i++) {
 		int p, q;
 		cin >> p >> q;
-		g[p][q] = true;
-		g[q][p] = true;
-		e[i][0] = p;
-		e[i][1] = q;
-		r[i] = 1;
-		l[q] += 1;
+		e[i][0] = p; // left end point of edge i is p
+		e[i][1] = q; // right end point of edge i is q
+		
+		if (load[p] < load[q]-1)
+			r[i] = 0; // how much of the edge is assigned to the right side (here it is assigned to the left because p's load is lower)
+		else if (load[q] < load[p]-1)
+			r[i] = 1; // how much of the edge is assigned to the right side (here it is assigned to the right because q's load is lower)
+		else
+			r[i] = load[p]/2-load[q]/2 + 0.5;
+
+		load[q] += r[i];
+		load[p] += 1 - r[i];
 	}
+
+	for (int i = 0; i < n+1; i++)
+		cout << load[i] << endl;
+	cout << endl << endl;
+	
 	int ii = 0;
 	while (ii < 10000) {
 		ii += 1;
 		bool flag = true;
 		for (int i = 0; i < m; i++) {
 			int p = e[i][0], q = e[i][1];
-			if (l[p]<l[q]+eps and r[i]>=eps) {
+			while (load[p]<load[q]-eps and r[i]>=eps) { // flip eps from right to left (load at p is smaller than that at q)
 				flag = false;
-				l[p] += eps;
-				l[q] -= eps;
+				load[p] += eps;
+				load[q] -= eps;
 				r[i] -= eps;
 			}
-			if (l[q]<l[p]+eps and r[i]+eps<=1) {
+			while (load[q]<load[p]-eps and r[i]+eps<=1) { // flip eps from left to right (load at q is smaller than that at p)
 				flag = false;
-				l[q] += eps;
-				l[p] -= eps;
+				load[q] += eps;
+				load[p] -= eps;
 				r[i] += eps;
 			}
 		}
 		if (flag)
 			break;
 	}
+
+	for (int i = 0; i < n+1; i++)
+		cout << load[i] << endl;
+	cout << endl << endl;
+	
+	
 	double ds = 0;
-	for (int i = 0; i < n; i++)
-		if (ds < l[i])
-			ds = l[i];
-	cout << ds;
+	for (int i = 0; i < n+1; i++)
+		if (ds < load[i])
+			ds = load[i];
+	cout << ds << endl;
+	cout << "iterations: " << ii << endl;
 	return 0;
 }
