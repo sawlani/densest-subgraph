@@ -111,6 +111,8 @@ int main(int argc, char** argv) {
   vector<int> m_ans;
   double mm_density = 0;
 
+  double densities[iters];
+
   auto mid = chrono::steady_clock::now();
 
   for (int tt = 0; tt < iters; tt++) {
@@ -196,6 +198,7 @@ int main(int argc, char** argv) {
       m_ans = ans;
       mm_density = max_density;
     }
+    densities[tt] = max_density;
   }
 
   auto end = chrono::steady_clock::now();
@@ -203,6 +206,9 @@ int main(int argc, char** argv) {
   cerr << "Approximate maximum density: " << mm_density << endl;
   cerr << "Time for reading input: " << chrono::duration_cast<chrono::milliseconds>(mid - start).count() << " ms" << endl;
   cerr << "Time for finding DSP value: " << chrono::duration_cast<chrono::milliseconds>(end - mid).count() << " ms" << endl;
-  
+  for (int tt=0; tt<iters; tt++)
+  {
+  	cout << "Density at iteration " << tt <<" = " << densities[tt];
+  }
   return 0;
 }
