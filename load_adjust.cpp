@@ -1,20 +1,27 @@
 #include <iostream>
+#include <cstring>
+#include <chrono>
 
 using namespace std;
 
-const int maxn = 100;
-const int maxm = 1000;
-
-int e[maxm][2];
-double r[maxm];
-double load[maxn];
-int n, m;
-double eps = 0.01;
-
 int main() {
 	
+	auto start = chrono::steady_clock::now();
+
+	int n, m;
+	double eps = 0.1;
+
 	cin >> n >> m;
-	
+	cout << n << m;
+	double * r = new double[m];
+    memset(r, 0, sizeof(double) * m);
+  	
+  	double * load = new double[n];
+    memset(load, 0, sizeof(double) * n);
+  	
+  	int ** e = new int[m][2];
+  	memset(e, 0, sizeof(double) * m*2);
+  	
 	for (int i = 0; i < n+1; i++)
 		load[i] = 0; // loads on vertices
 	for (int i = 0; i < m; i++) {
@@ -34,14 +41,19 @@ int main() {
 		load[p] += 1 - r[i];
 	}
 
-	for (int i = 0; i < n+1; i++)
-		cout << load[i] << endl;
-	cout << endl << endl;
+	//for (int i = 0; i < n+1; i++)
+	//	cout << load[i] << endl;
+	//cout << endl << endl;
 	
+	auto mid = chrono::steady_clock::now();
+
+	bool flag = false;
+		
 	int ii = 0;
-	while (ii < 10000) {
+	while (!flag) {
 		ii += 1;
-		bool flag = true;
+		cout << ii;
+		flag = true;
 		for (int i = 0; i < m; i++) {
 			int p = e[i][0], q = e[i][1];
 			while (load[p]<load[q]-eps and r[i]>=eps) { // flip eps from right to left (load at p is smaller than that at q)
@@ -57,13 +69,15 @@ int main() {
 				r[i] += eps;
 			}
 		}
-		if (flag)
-			break;
 	}
 
-	for (int i = 0; i < n+1; i++)
-		cout << load[i] << endl;
-	cout << endl << endl;
+	auto end = chrono::steady_clock::now();
+	cerr << "Time for reading input: " << chrono::duration_cast<chrono::milliseconds>(mid - start).count() << " ms" << endl;
+  	cerr << "Time for finding DSP value: " << chrono::duration_cast<chrono::milliseconds>(end - mid).count() << " ms" << endl;
+
+	//for (int i = 0; i < n+1; i++)
+	//	cout << load[i] << endl;
+	//cout << endl << endl;
 	
 	
 	double ds = 0;
