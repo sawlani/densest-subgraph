@@ -13,6 +13,7 @@
 #include <unordered_set>
 #include <algorithm>
 #include <numeric>
+#include <chrono>
 using namespace std;
 
 
@@ -81,6 +82,8 @@ __inline void build(int x, int y) {
 };
   
 int main(int argc, char** argv) {
+  
+  auto start = chrono::steady_clock::now();
 
   int iters = atoi(argv[1]);
   string input_file = argv[2];
@@ -133,6 +136,8 @@ int main(int argc, char** argv) {
   pair<int, int> * deg_sorted = new pair<int, int>[n];
   vector<int> m_ans;
   double mm_density = 0;
+
+  auto mid1 = chrono::steady_clock::now();
 
   for (int tt = 0; tt < iters; tt++) {
     //cout << tt << endl;
@@ -224,6 +229,8 @@ int main(int argc, char** argv) {
     //printf("Max density = %.12f (iteration %d)\n", max_density, tt);
   }
 
+  auto mid2 = chrono::steady_clock::now();
+
   vector<bool> insol(n, false);
   for(int i : m_ans) insol[i] = true;
   double maxdens=0;
@@ -245,13 +252,21 @@ int main(int argc, char** argv) {
   if(m_ans.size() == 0) m_ans.push_back(1);
   maxdens = curedges / 2. / m_ans.size();
 
+  auto end = chrono::steady_clock::now();
+
   //outfile << "Time: " << clock() << endl;
   //cerr << "Time: " << clock() << endl;
   //outfile << "Filename: " << input_file << endl;
   //outfile << "Iterations: " << iters << endl;
   //outfile << "Max load: " << w[V[0]] * eps << endl;
+  cerr << "max density: " << mm_density << endl;
   cerr << "Approximate maximum density: " << maxdens << endl;
-  cerr << "Approximate densest subgraph:" << endl;
+  //cerr << "Approximate densest subgraph:" << endl;
+  
+  cerr << "Time for reading input: " << chrono::duration_cast<chrono::milliseconds>(mid1 - start).count() << " ms" << endl;
+  cerr << "Time for finding DSP value: " << chrono::duration_cast<chrono::milliseconds>(mid2 - mid1).count() << " ms" << endl;
+  cerr << "Time for finding actual subgraph: " << chrono::duration_cast<chrono::milliseconds>(end - mid2).count() << " ms" << endl;
+
   outfile << m_ans.size() << endl;
   for(int i : m_ans) 
   {
