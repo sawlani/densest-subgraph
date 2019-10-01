@@ -69,7 +69,7 @@ int main(int argc, char **argv) {
 //    SO WE CAN'T PUT FRACTIONALS, INSTEAD, JUST MULTIPLY EVERYTHING BY 100 OR 1000...
     int ACCURACY = atoi(argv[1]);
  
-    string input_file = argv[2];
+    /*string input_file = argv[2];
     string output_file;
     ofstream outfile;
     if (argc >= 4)
@@ -86,7 +86,7 @@ int main(int argc, char **argv) {
     freopen (input_file.c_str(), "r", stdin); //input file
     //freopen (output_file.c_str(), "a", stdout); //output file
     outfile.open(output_file.c_str(), ios_base::app);
-    
+    */
     
     auto begin = clock();
     int n, m;
@@ -101,8 +101,8 @@ int main(int argc, char **argv) {
     }
 
 
-    outfile << "Test dataset: " << input_file << endl;
-    outfile << "I/O finishes: " << float(clock()-begin) /  CLOCKS_PER_SEC << endl;
+    //cout << "Test dataset: " << input_file << endl;
+    //outfile << "I/O finishes: " << float(clock()-begin) /  CLOCKS_PER_SEC << endl;
    
     int source = n + m;
     int sink = n + m + 1;
@@ -183,7 +183,7 @@ int main(int argc, char **argv) {
     
     auto end = clock();
 
-    outfile << "Density is " << (double)l/ACCURACY << endl;
+    cerr << "Density is " << (double)l/ACCURACY << endl;
 
     /*outfile << "subgraph:\n";
     for (vector<long>::iterator v = subg.begin(); v != subg.end(); ++v) {
@@ -191,7 +191,7 @@ int main(int argc, char **argv) {
 //        cout << *v << " ";
 }
 cerr << endl;*/
-    outfile << "Time taken in seconds: " << float(end-begin) /  CLOCKS_PER_SEC << endl;
+    //outfile << "Time taken in seconds: " << float(end-begin) /  CLOCKS_PER_SEC << endl;
     cerr << "Time taken in seconds: " << float(end-begin) /  CLOCKS_PER_SEC << endl;
     // cout << endl;
 
