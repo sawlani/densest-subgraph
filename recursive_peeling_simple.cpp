@@ -208,7 +208,7 @@ int main(int argc, char** argv) {
   cerr << "Time for finding DSP value: " << chrono::duration_cast<chrono::milliseconds>(end - mid).count() << " ms" << endl;
   for (int tt=0; tt<iters; tt++)
   {
-  	cout << "Density at iteration " << tt <<" = " << densities[tt];
+  	cout << "Density at iteration " << tt+1 <<" = " << densities[tt] << endl;
   }
   return 0;
 }
