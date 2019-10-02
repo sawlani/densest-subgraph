@@ -21,6 +21,7 @@ extern "C" {
 #include <iomanip>
 #include <vector> 
 #include <cmath> 
+#include <chrono>
 using namespace std;
 
 
@@ -47,7 +48,7 @@ bool nontrivial(int n_nodes, node *nodes) {
     return res > 1;
 }
 
-inline char GET_CHAR(){
+/*inline char GET_CHAR(){
 	const int maxn = 131072;
 	static char buf[maxn],*p1=buf,*p2=buf;
 	return p1==p2&&(p2=(p1=buf)+fread(buf,1,maxn,stdin),p1==p2)?EOF:*p1++;
@@ -61,12 +62,14 @@ inline int getInt() {
 		c = GET_CHAR();
 	}
 	return res;
-}
+}*/
 
 int main(int argc, char **argv) {
 //THIS NUMBER DETERMINES HOW MANY DECIMALS WE COMPUTE THINGS TO
 //  HI_PR ONLY TAKES INTEGER CAPACITIES
 //    SO WE CAN'T PUT FRACTIONALS, INSTEAD, JUST MULTIPLY EVERYTHING BY 100 OR 1000...
+    auto startio = chrono::steady_clock::now();
+
     int ACCURACY = atoi(argv[1]);
  
     /*string input_file = argv[2];
@@ -88,22 +91,25 @@ int main(int argc, char **argv) {
     outfile.open(output_file.c_str(), ios_base::app);
     */
     
-    auto begin = clock();
     int n, m;
     int k = 2; ///EDGES CASE!
-    n = getInt(); m = getInt();
+    cin >> n >> m;
+    //n = getInt(); m = getInt();
 
 
     int *cliques = new int[m * k];
     for (int i = 0; i < m * k; ++i) {
-      cliques[i]=getInt(); cliques[i]--;
-		//printf("%d\n", cliques[i]);
+      cin >> cliques[i];
+      //cliques[i]=getInt();
+      cliques[i]--;
     }
 
-
-    //cout << "Test dataset: " << input_file << endl;
-    //outfile << "I/O finishes: " << float(clock()-begin) /  CLOCKS_PER_SEC << endl;
+    auto endio = chrono::steady_clock::now();
+    
+    cout << "Time for reading input: " << chrono::duration_cast<chrono::milliseconds>(endio - startio).count() << " ms" << endl;
    
+    auto start = chrono::steady_clock::now();
+    
     int source = n + m;
     int sink = n + m + 1;
     int n_nodes = n + m + 2;
@@ -181,7 +187,9 @@ int main(int argc, char **argv) {
 
     }
     
-    auto end = clock();
+    auto end = chrono::steady_clock::now();
+    
+    cout << "Time for finding solution: " << chrono::duration_cast<chrono::milliseconds>(end - start).count() << " ms" << endl;
 
     cerr << "Density is " << (double)l/ACCURACY << endl;
 
@@ -192,7 +200,6 @@ int main(int argc, char **argv) {
 }
 cerr << endl;*/
     //outfile << "Time taken in seconds: " << float(end-begin) /  CLOCKS_PER_SEC << endl;
-    cerr << "Time taken in seconds: " << float(end-begin) /  CLOCKS_PER_SEC << endl;
     // cout << endl;
 
     /*

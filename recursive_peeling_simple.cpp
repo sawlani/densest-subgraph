@@ -16,7 +16,21 @@
 #include <chrono>
 using namespace std;
 
-
+/*inline char GET_CHAR(){
+	const int maxn = 131072;
+	static char buf[maxn],*p1=buf,*p2=buf;
+	return p1==p2&&(p2=(p1=buf)+fread(buf,1,maxn,stdin),p1==p2)?EOF:*p1++;
+}
+inline int getInt() {
+	int res(0);
+	char c = GET_CHAR();
+	while(c < '0') c = GET_CHAR();
+	while(c >= '0') {
+		res = res * 10 + (c - '0');
+		c = GET_CHAR();
+	}
+	return res;
+}*/
 
 int n, m;
   
@@ -77,11 +91,12 @@ __inline void build(int x, int y) {
 //////////////////////////////////////////////////////////////////////////////////////////////////////
 int main(int argc, char** argv) {
 
-  auto start = chrono::steady_clock::now();
+  auto startio = chrono::steady_clock::now();
 
   int iters = atoi(argv[1]);
   
   cin >> n >> m;
+  //n = getInt(); m = getInt();
   edges = new Edge[m * 2 + 10];
   idx = new int[n];
   memset(idx, 0, sizeof(int) * n);
@@ -100,7 +115,8 @@ int main(int argc, char** argv) {
   for (int i = 0; i < m; i++) {
     int p, q;
     cin >> p >> q;
-    p -= 1;
+    //p = getInt(); q = getInt();
+  	p -= 1;
     q -= 1;
     build(p, q);
     build(q, p);
@@ -111,11 +127,15 @@ int main(int argc, char** argv) {
   vector<int> m_ans;
   double mm_density = 0;
 
-  double densities[iters];
+  auto endio = chrono::steady_clock::now();
+  int sum_iter_times = 0;
 
-  auto mid = chrono::steady_clock::now();
+  cout << "Time for reading input and initialization: " << chrono::duration_cast<chrono::milliseconds>(endio - startio).count() << " ms" << endl;
 
   for (int tt = 0; tt < iters; tt++) {
+
+  	auto startiter = chrono::steady_clock::now();
+
     for (int i = 0; i < n; i++) {
       nxt[i] = prv[i] = -1;
       pos[i] = 0;
@@ -198,17 +218,14 @@ int main(int argc, char** argv) {
       m_ans = ans;
       mm_density = max_density;
     }
-    densities[tt] = mm_density;
+
+    auto enditer = chrono::steady_clock::now();
+    int elapsed = chrono::duration_cast<chrono::milliseconds>(enditer - startiter).count();
+    sum_iter_times += elapsed;
+
+    cout << "Max density until iteration " << tt+1 <<": " << mm_density << endl;
+    cout << "Avg time per iteration: " << sum_iter_times/(tt+1) << " ms" << endl;
   }
 
-  auto end = chrono::steady_clock::now();
-
-  cerr << "Approximate maximum density: " << mm_density << endl;
-  cerr << "Time for reading input: " << chrono::duration_cast<chrono::milliseconds>(mid - start).count() << " ms" << endl;
-  cerr << "Time for finding DSP value: " << chrono::duration_cast<chrono::milliseconds>(end - mid).count() << " ms" << endl;
-  for (int tt=0; tt<iters; tt++)
-  {
-  	cout << "Max density until iteration " << tt+1 <<" = " << densities[tt] << endl;
-  }
   return 0;
 }
