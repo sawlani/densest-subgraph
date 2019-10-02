@@ -23,7 +23,7 @@ cd exactDSP-cpp
 gcc -O4 -Wall -DNO_MAIN hi_pr.c -c -o hi_pr.o
 g++ -O3 densest.cpp hi_pr.o -o ../exact
 cd ..
-./exact &lt;multiplier&gt; &lt; input_file
+./exact <multiplier> < input_file
 ```
 
 ## Approximation algorithms
@@ -32,7 +32,7 @@ cd ..
 To compile the C++ code, use:
 ```
 g++ -O3 recursive_peeling_simple.cpp -o rps
-./rps &lt;number_of_iterations&gt; &lt; input_file
+./rps <number_of_iterations> < input_file
 ```
 
 ### MWU: C++ code
