@@ -4,7 +4,7 @@
 Every program reads an edge list in the following format:
 
 ```
-m n
+n m
 u1 v1
 u2 v2
 .
@@ -14,41 +14,26 @@ um vm
 ```
 
 ## Exact algorithm
-### Python code
-
-To run the exact max-flow based algorithm,
-use
-```
-python3 exactDSP-python/exactDSP.py input_file
-```
-
-The result gets appended to the **results/results_exact** file.
 
 ### C++ code
 
 To compile and run the code, use
 ```
 cd exactDSP-cpp
-chmod +x compile.sh
-./densest < input_file
+gcc -O4 -Wall -DNO_MAIN hi_pr.c -c -o hi_pr.o
+g++ -O3 densest.cpp hi_pr.o -o ../exact
+cd ..
+./exact &lt;multiplier&gt; &lt; input_file
 ```
-The results are on the command line.
 
 ## Approximation algorithms
 ### Recursive peeling: C++ code
 
 To compile the C++ code, use:
 ```
-g++ -o dsp recursive_peeling.cpp
+g++ -O3 recursive_peeling_simple.cpp -o rps
+./rps &lt;number_of_iterations&gt; &lt; input_file
 ```
-
-To run the code, use:
-```
-./dsp number_of_iterations input_file output_file solution_file
-```
-The last two arguments are optional.
-
-The result gets appended to the **results/results_recursive_peeling** file.
 
 ### MWU: C++ code
 
