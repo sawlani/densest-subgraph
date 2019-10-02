@@ -3,13 +3,12 @@
 import sys
 
 graph = open(sys.argv[1])
-communities = open(sys.argv[2])
-out_graph = open(sys.argv[3], 'w')
-out_communities = open(sys.argv[4], 'w')
+out_graph = open(sys.argv[2], 'w')
 
 
-vid = 0
+vid = 1
 vid_map = {}
+m = 0
 for line in graph:
     if line[0] == '#':
         continue
@@ -22,28 +21,24 @@ for line in graph:
         vid_map[e[1]] = vid
         vid += 1
 
-n = vid
-edges = [[] for i in range(n)]
+n = vid-1
+edges = [set() for i in range(n+1)]
 
 graph.seek(0)
 for line in graph:
-    if line[0] == '#':
+    if (line[0] == '#') or (line[0] == '%'):
         continue
 
     e = map(int, line.split())
     u = vid_map[e[0]]
     v = vid_map[e[1]]
-    edges[min(u, v)].append(max(u, v))
+    if (max(u,v) not in edges[min(u,v)]) and (u != v):
+    	edges[min(u, v)].add(max(u, v))
+    	m+=1
 graph.close()
 
-for l in edges:
-    out_graph.write(' '.join(map(str, l)) + '\n')
+out_graph.write(str(n) + ' ' + str(m) + '\n')
+for l in enumerate(edges):
+    for j in l[1]:
+    	out_graph.write(str(l[0]) + ' ' + str(j) + '\n')
 out_graph.close()
-
-out_communities.write(str(n) + '\n')
-for line in communities:
-    l = []
-    for i in map(int, line.split()):
-        l.append(vid_map[i])
-    out_communities.write(' '.join(map(str, l)) + '\n')
-out_communities.close()
