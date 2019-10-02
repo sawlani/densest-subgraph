@@ -20,7 +20,7 @@ um vm
 To compile and run the code, use
 ```
 cd exactDSP-cpp
-gcc -O4 -Wall -DNO_MAIN hi_pr.c -c -o hi_pr.o
+gcc -O3 -Wall -DNO_MAIN hi_pr.c -c -o hi_pr.o
 g++ -O3 densest.cpp hi_pr.o -o ../exact
 cd ..
 ./exact multiplier < input_file
