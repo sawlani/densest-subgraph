@@ -43,6 +43,8 @@ inline void LLAppend(int u) {
 //if(u == 11) cout << "!!!" << load[u] << " " << last[2] << endl;
 }
 
+pair<int, int> bleh[MAXV];
+
 int main(int argc, char** argv) {
 //parameters: #ITERS, INPUTFILENAME, OUTPUT FILE NAME
 	int iters = atoi(argv[1]);
@@ -76,6 +78,22 @@ int main(int argc, char** argv) {
 		e_start[e_ini[i * 2 + 1]]++;
 	}
 	cout << "DONE WITH IO: " << clock() << endl;
+/*
+//reorder vertices: sort by degree...
+	for(int u = 0; u < n; ++u) {
+		bleh[u] = make_pair(e_start[u], u);
+	}
+	sort(bleh, bleh + n);
+	for(int i = 0; i < n; ++i) {
+		temp[bleh[i].second] = i;
+	}
+	memset(e_start, 0, sizeof(e_start));
+	for(int e1 = 0; e1 < m * 2; ++e1) {
+		e_ini[e1] = temp[e_ini[e1]];
+		e_start[e_ini[e1]]++;
+	}	
+*/
+
 //radix sort all the edges so things are in increasing CSR ordering
 	int s = 0;
 	for(int u = 0; u < n; ++u) {
@@ -125,32 +143,28 @@ int main(int argc, char** argv) {
 			LLAppend(u);
 		}
 
+//int cou[MAXLOAD]; memset(cou, 0, sizeof(cou));
 		int cur_n = n;
 		int cur_m = m;
 		double max_density = (double)m / n;
 		int i1 = 0;
+//cout << cur_n << endl;
 		while(cur_n > 0) {
 			while(last[i1] == -1 && i1 < MAXLOAD) {
 				i1++;
 			}
 assert(i1 < MAXLOAD); //didn't support the case where load is too big
-
 //cout << i1 << endl;
 //if(cur_n > 0) cout << i1 << " " << cur_n << endl;
 			int u = id[last[i1]];
-//if(last[i1] == 42) cout << "HIHIHI " << u << endl;
 			last[i1] = id_prev[last[i1]]; //delete u from its linked list
 			if(load[u] % 2 == 1) {//not done yet
 				load[u] ^= 1; //mark u as done
-//if(i1 != load[u] / 2) {
-//  cout << i1 << "   "; cout << load[u] / 2 << endl;
-//	for(int i2 = 0; i2 < 10; ++i2) cout << i2 << "::" << last[i2] << endl;
-//}
+//cou[i1]++;
 //assert(i1 == load[u] / 2);
 				cur_n--;
 				for(int e1 = e_start[u]; e1 < e_start[u + 1]; ++e1) {
 					int v = e[e1];
-//cout << u << "---" << v << endl;
 					if(load[v] % 2 == 1) {
 //decrement v's counter if v is not done yet
 						load[v] -= 2;
@@ -165,6 +179,7 @@ assert(i1 < MAXLOAD); //didn't support the case where load is too big
 				i1--;
 			}
 		}
+//for(int i = 0; i < MAXLOAD; ++i) if(cou[i] > 0) cout << i << ":" << cou[i] << endl;
 //cout << cur_n << endl;
 		if(max_density > mm_density) {
 			mm_density = max_density;
@@ -173,7 +188,6 @@ assert(i1 < MAXLOAD); //didn't support the case where load is too big
 		cout << "Max density = " << max_density << " ";
 		cout << "Time = " << clock() << endl;
 	}
-
 	//outfile << "Time: " << clock() << endl;
 	//outfile << "Filename: " << input_file << endl;
 	//outfile << "Iterations: " << iters << endl;
