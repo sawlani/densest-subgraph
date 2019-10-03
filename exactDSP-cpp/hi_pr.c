@@ -825,9 +825,9 @@ excessType min_cut(_n, _m, _nodes, _arcs, _cap, _source, _sink, _nMin)
 
     t2 = timer() - t2;
 
-    fprintf (stderr, "flow:       %12.01f\n", flow);
+    // fprintf (stderr, "flow:       %12.01f\n", flow);
 
-    fprintf (stderr, "cut tm:      %10.2f\n", t2);
+    // fprintf (stderr, "cut tm:      %10.2f\n", t2);
 
 #ifdef CHECK_SOLUTION
 
