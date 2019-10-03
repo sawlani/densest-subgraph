@@ -1,7 +1,6 @@
 *.o
 *.exe
 **/results
-*.txt
 rp
 rps
 la
