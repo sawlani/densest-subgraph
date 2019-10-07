@@ -46,30 +46,18 @@ inline void LLAppend(int u) {
 pair<int, int> bleh[MAXV];
 
 int main(int argc, char** argv) {
-//parameters: #ITERS, INPUTFILENAME, OUTPUT FILE NAME
+//parameters: #ITERS
+	auto startio = chrono::steady_clock::now();
+
 	int iters = atoi(argv[1]);
-	//double eps = 1.0/iters;
-	string input_file = argv[2];
-
-	string output_file;
-	ofstream outfile;
-
-	if (argc >= 4)
-	{
-		output_file = argv[3];
-	}
-	else
-	{
-		output_file = "results/results_default.txt";
-	}
-
-	freopen (input_file.c_str(), "r", stdin); //input file
-	outfile.open(output_file.c_str(), ios_base::app);
+	
 	n = getInt();
 	m = getInt();
 
 	memset(e_start, 0, sizeof(e_start));
-	cout << "DECLARED/CLEARED INITIAL MEMORY: " << clock() << endl;
+	
+	//cout << "DECLARED/CLEARED INITIAL MEMORY: " << clock() << endl;
+	
 	for (int i = 0; i < m; i++) {
 		int u, v;
 		e_ini[i * 2] = getInt() - 1;
@@ -77,7 +65,8 @@ int main(int argc, char** argv) {
 		e_start[e_ini[i * 2]]++;
 		e_start[e_ini[i * 2 + 1]]++;
 	}
-	cout << "DONE WITH IO: " << clock() << endl;
+	
+	//cout << "DONE WITH IO: " << clock() << endl;
 /*
 //reorder vertices: sort by degree...
 	for(int u = 0; u < n; ++u) {
@@ -120,7 +109,7 @@ int main(int argc, char** argv) {
 		e_start[u] = e_start[u - 1];
 	}
 	e_start[0] = 0;
-	cout << "DONE WITH CREATING GRAPH: " << clock() << endl;
+	//cout << "DONE WITH CREATING GRAPH: " << clock() << endl;
 
 //for(int u = 0; u < n; ++u) for(int e1 = e_start[u]; e1 < e_start[u + 1]; ++e1) cout << u << "===" << e[e1] << endl;
 	vector<int> m_ans;
@@ -129,7 +118,17 @@ int main(int argc, char** argv) {
 		load[u] = 0;
 	}
 
-	for (int tt = 0; tt < iters; tt++) {
+	auto endio = chrono::steady_clock::now();
+	int init_time = chrono::duration_cast<chrono::milliseconds>(endio - startio).count();
+  
+    cout << "Time for reading input and initialization: " << init_time << " ms" << endl;
+  	
+  	int sum_iter_times = 0;
+
+  	for (int tt = 0; tt < iters; tt++) {
+		
+		auto startiter = chrono::steady_clock::now();
+
 		for(int i = 0; i < MAXLOAD; ++i) {
 			last[i] = -1;
 		}
@@ -184,22 +183,17 @@ assert(i1 < MAXLOAD); //didn't support the case where load is too big
 		if(max_density > mm_density) {
 			mm_density = max_density;
 		}
-		cout << "ITER = " << tt << "  ";
-		cout << "Max density = " << max_density << " ";
-		cout << "Time = " << clock() << endl;
+		auto enditer = chrono::steady_clock::now();
+		int elapsed = chrono::duration_cast<chrono::milliseconds>(enditer - startiter).count();
+		sum_iter_times += elapsed;
+		    
+		cout << "Max density AT iteration " << tt+1 <<": " << max_density << endl;
+		cout << "Max density until iteration " << tt+1 <<": " << mm_density << endl;
+		cout << "Avg time per iteration: " << sum_iter_times/(tt+1) << " ms" << endl;
+		cout << "Total time: " << sum_iter_times + init_time << " ms" << endl;
 	}
-	//outfile << "Time: " << clock() << endl;
-	//outfile << "Filename: " << input_file << endl;
-	//outfile << "Iterations: " << iters << endl;
-	//outfile << "Max load: " << w[V[0]] * eps << endl;
-	cout << "Time: " << clock() << endl;
-	cout << "Approximate maximum density: " << mm_density << endl;
-/*
-	outfile << m_ans.size() << endl;
-	for(int i : m_ans) 
-	{
-		outfile << i << endl;
-	}
-*/
+
+	//cout << "Time: " << clock() << endl;
+	//cout << "Approximate maximum density: " << mm_density << endl;
 	return 0;
 }

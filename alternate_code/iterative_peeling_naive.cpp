@@ -64,15 +64,16 @@ int main(int argc, char** argv) {
     init_deg[q]++;
   }
 
+  double mm_density = 0;
+
+  vector<bool> exists(n);
+
   auto endio = chrono::steady_clock::now();
   int init_time = chrono::duration_cast<chrono::milliseconds>(endio - startio).count();
   
   cout << "Time for reading input and initialization: " << init_time << " ms" << endl;
   
-  double mm_density = 0;
-
   int sum_iter_times = 0;
-  vector<bool> exists(n);
 
   for (int tt = 0; tt < iters; tt++) {
 
