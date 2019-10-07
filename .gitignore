@@ -1,7 +1,6 @@
 *.o
 *.exe
 **/results
-rp
-rps
-la
 exact
+*.swp
+*.stackdump
