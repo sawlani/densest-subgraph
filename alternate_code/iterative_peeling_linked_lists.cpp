@@ -16,7 +16,10 @@
 #include <chrono>
 using namespace std;
 
-/*inline char GET_CHAR(){
+////////////////////////////////////////////////////////////////////////////////////////
+// Helper for fast input
+
+inline char GET_CHAR(){
 	const int maxn = 131072;
 	static char buf[maxn],*p1=buf,*p2=buf;
 	return p1==p2&&(p2=(p1=buf)+fread(buf,1,maxn,stdin),p1==p2)?EOF:*p1++;
@@ -30,10 +33,12 @@ inline int getInt() {
 		c = GET_CHAR();
 	}
 	return res;
-}*/
+}
+
+////////////////////////////////////////////////////////////////////////////////////////
 
 int n, m;
-  
+
 struct Edge {
   int y, next;
 };
@@ -87,16 +92,14 @@ __inline void build(int x, int y) {
 };
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////
-// MAIN
-//////////////////////////////////////////////////////////////////////////////////////////////////////
+// Main
 int main(int argc, char** argv) {
 
   auto startio = chrono::steady_clock::now();
 
   int iters = atoi(argv[1]);
   
-  cin >> n >> m;
-  //n = getInt(); m = getInt();
+  n = getInt(); m = getInt();
   edges = new Edge[m * 2 + 10];
   idx = new int[n];
   memset(idx, 0, sizeof(int) * n);
@@ -114,8 +117,7 @@ int main(int argc, char** argv) {
   prv = new int[n]; nxt = new int[n];
   for (int i = 0; i < m; i++) {
     int p, q;
-    cin >> p >> q;
-    //p = getInt(); q = getInt();
+    p = getInt(); q = getInt();
   	p -= 1;
     q -= 1;
     build(p, q);
@@ -129,9 +131,10 @@ int main(int argc, char** argv) {
 
   auto endio = chrono::steady_clock::now();
   int sum_iter_times = 0;
-
-  cout << "Time for reading input and initialization: " << chrono::duration_cast<chrono::milliseconds>(endio - startio).count() << " ms" << endl;
-
+  int init_time = chrono::duration_cast<chrono::milliseconds>(endio - startio).count();
+  
+  cout << "Time for reading input and initialization: " << init_time << " ms" << endl;
+  
   for (int tt = 0; tt < iters; tt++) {
 
   	auto startiter = chrono::steady_clock::now();
@@ -225,6 +228,7 @@ int main(int argc, char** argv) {
 
     cout << "Max density until iteration " << tt+1 <<": " << mm_density << endl;
     cout << "Avg time per iteration: " << sum_iter_times/(tt+1) << " ms" << endl;
+    cout << "Total time: " << sum_iter_times + init_time << " ms" << endl;
   }
 
   return 0;
