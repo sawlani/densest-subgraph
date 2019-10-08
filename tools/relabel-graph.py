@@ -13,7 +13,7 @@ for line in graph:
     if line[0] == '#':
         continue
 
-    e = map(int, line.split())
+    e = list(map(int, line.split()))
     if not e[0] in vid_map:
         vid_map[e[0]] = vid
         vid += 1
@@ -29,7 +29,7 @@ for line in graph:
     if (line[0] == '#') or (line[0] == '%'):
         continue
 
-    e = map(int, line.split())
+    e = list(map(int, line.split()))
     u = vid_map[e[0]]
     v = vid_map[e[1]]
     if (max(u,v) not in edges[min(u,v)]) and (u != v):

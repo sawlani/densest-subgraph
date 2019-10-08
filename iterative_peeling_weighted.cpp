@@ -40,7 +40,7 @@ inline int getInt() {
 int n, m;
 
 struct Edge {
-  int y, next;
+  int y, next, wt;
 };
 
 struct Node {
@@ -85,9 +85,10 @@ int l = 0;
 Edge * edges;
 int * idx;
 
-__inline void build(int x, int y) {
+__inline void build(int x, int y, int wt) {
     edges[++l].next = idx[x];
     edges[l].y = y;
+    edges[l].wt = wt;
     idx[x] = l;
 };
 
@@ -115,15 +116,17 @@ int main(int argc, char** argv) {
   memset(w, 0, sizeof(int) * n); //initial vertex weights=0, i.e., no self loops at the start 
   memset(pos, 0, sizeof(int) * n);
   prv = new int[n]; nxt = new int[n];
+  int wtsum = 0;
   for (int i = 0; i < m; i++) {
-    int p, q;
-    p = getInt(); q = getInt();
+    int p, q, wt;
+    p = getInt(); q = getInt(); wt = getInt();
   	p -= 1;
     q -= 1;
-    build(p, q);
-    build(q, p);
-    init_deg[p]++;
-    init_deg[q]++;
+    build(p, q, wt);
+    build(q, p, wt);
+    init_deg[p]+=wt;
+    init_deg[q]+=wt;
+    wtsum += wt;
   }
   pair<int, int> * deg_sorted = new pair<int, int>[n];
   vector<int> m_ans;
@@ -163,8 +166,8 @@ int main(int argc, char** argv) {
       itr[v] = n_list;
     }
     
-    double max_density = (double)m / n;
-    int cur_m = m, cur_n = n;
+    double max_density = (double) wtsum / n;
+    int cur_wtsum = wtsum, cur_n = n;
     vector<int> ans;
     int max_size = 0;
     while(lists[0].next) {
@@ -181,17 +184,18 @@ int main(int argc, char** argv) {
       w[k] = deg[k]; //increment vertex weight for the next iteration (self loops)
       cur_n -= 1;
       ans.push_back(k);
-      for (int p = idx[k]; p; p = edges[p].next) { //decrement degrees of k's neighbors
+      for (int p = idx[k]; p; p = edges[p].next) {
         int j = edges[p].y;
         if(pos[j] == -1) continue;
-        cur_m -= 1;
+        int edgewt = edges[p].wt;
+        cur_wtsum -= edgewt;
         
         int i = itr[j];
         erasenode(j);
         int i1 = lists[i].prev;
         
         if(lists[i].idx == -1) eraselist(i);
-        deg[j]--;       
+        deg[j]-= edgewt;       
         prv[j] = nxt[j] = -1;
         if(i1 == 0 || lists[i1].deg != deg[j]) {
           ++n_list;
@@ -210,10 +214,10 @@ int main(int argc, char** argv) {
         }
       }
       if(cur_n == 0) continue;
-      if(max_density < (double)cur_m / cur_n) {
+      if(max_density < (double) cur_wtsum / cur_n) {
         max_size = ans.size();
       }
-      max_density = max(max_density, (double)cur_m / cur_n);
+      max_density = max(max_density, (double)cur_wtsum / cur_n);
     }
     reverse(ans.begin(), ans.end());
     ans.resize(n - max_size);
