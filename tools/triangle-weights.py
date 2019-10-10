@@ -9,7 +9,6 @@ out_graph = open(sys.argv[3], 'w')
 triangles = {}
 for line in triangledata:
     t = list(map(int, line.split()))
-    print(t)
     if len(t)>3:
         continue
     e1 = (min(t[0],t[1]), max(t[0],t[1]))
@@ -20,7 +19,6 @@ for line in triangledata:
             triangles[e] = 1
         else:
             triangles[e] += 1
-    print(triangles)
 
 triangledata.close()
 
