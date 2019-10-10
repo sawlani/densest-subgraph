@@ -48,7 +48,7 @@ bool nontrivial(int n_nodes, node *nodes) {
     return res > 1;
 }
 
-/*inline char GET_CHAR(){
+inline char GET_CHAR(){
 	const int maxn = 131072;
 	static char buf[maxn],*p1=buf,*p2=buf;
 	return p1==p2&&(p2=(p1=buf)+fread(buf,1,maxn,stdin),p1==p2)?EOF:*p1++;
@@ -62,7 +62,7 @@ inline int getInt() {
 		c = GET_CHAR();
 	}
 	return res;
-}*/
+}
 
 int main(int argc, char **argv) {
 //THIS NUMBER DETERMINES HOW MANY DECIMALS WE COMPUTE THINGS TO
@@ -93,14 +93,14 @@ int main(int argc, char **argv) {
     
     int n, m;
     int k = 2; ///EDGES CASE!
-    cin >> n >> m;
-    //n = getInt(); m = getInt();
+    //cin >> n >> m;
+    n = getInt(); m = getInt();
 
 
     int *cliques = new int[m * k];
     for (int i = 0; i < m * k; ++i) {
-      cin >> cliques[i];
-      //cliques[i]=getInt();
+      //cin >> cliques[i];
+      cliques[i]=getInt();
       cliques[i]--;
     }
 
