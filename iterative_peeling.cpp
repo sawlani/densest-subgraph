@@ -231,5 +231,23 @@ int main(int argc, char** argv) {
     cout << "Total time: " << sum_iter_times + init_time << " ms" << endl;
   }
 
+  string output_file;
+  ofstream outfile;
+
+  if (argc >= 3)
+  {
+    output_file = argv[2];
+  }
+  else
+  {
+    output_file = "soln.tmp";
+  }
+
+  outfile.open(output_file.c_str());
+  for (int i : m_ans)
+  {
+    outfile << i+1 << endl;
+  }
+
   return 0;
 }
