@@ -93,6 +93,8 @@ int main(int argc, char** argv) {
   double mm_density = 0;
 
   vector<bool> exists(n);
+  vector<bool> iterans(n);
+  vector<bool> ans(n);
 
   auto endio = chrono::steady_clock::now();
   int init_time = chrono::duration_cast<chrono::milliseconds>(endio - startio).count();
@@ -116,6 +118,7 @@ int main(int argc, char** argv) {
     int cur_sum_wts = sum_wts, cur_n = n;
 
     fill(exists.begin(), exists.end(), true);
+    iterans = exists;
 
     while (cur_n > 0) {
       cur_n--;
@@ -135,11 +138,14 @@ int main(int argc, char** argv) {
       }
       if (iter_max_density < (double) cur_sum_wts / cur_n) {
         iter_max_density = (double) cur_sum_wts / cur_n;
+        iterans = exists;
       }
     }
     
     if(iter_max_density > mm_density) {
       mm_density = iter_max_density;
+      cout << "mm changing " << mm_density << endl;
+      ans = iterans;
     }
 
     auto enditer = chrono::steady_clock::now();
@@ -150,6 +156,24 @@ int main(int argc, char** argv) {
     cout << "Max density until iteration " << tt+1 <<": " << mm_density << endl;
     cout << "Avg time per iteration: " << sum_iter_times/(tt+1) << " ms" << endl;
     cout << "Total time: " << sum_iter_times + init_time << " ms" << endl;
+  }
+
+  string output_file;
+  ofstream outfile;
+
+  if (argc >= 3)
+  {
+    output_file = argv[2];
+  }
+  else
+  {
+    output_file = "soln.tmp";
+  }
+
+  outfile.open(output_file.c_str());
+  for (int i=0;i<n;i++)
+  {
+    if (ans[i]) outfile << i+1 << endl;
   }
 
   return 0;
