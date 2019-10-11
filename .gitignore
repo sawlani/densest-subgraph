@@ -1,6 +1,8 @@
 *.o
 *.exe
-**/results
-exact
 *.swp
 *.stackdump
+exact
+exactweighted
+ip
+ipnw
