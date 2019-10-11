@@ -2,6 +2,7 @@
 *.exe
 *.swp
 *.stackdump
+*.tmp
 exact
 exactweighted
 ip
