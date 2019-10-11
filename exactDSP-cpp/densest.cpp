@@ -193,25 +193,23 @@ int main(int argc, char **argv) {
 
     cerr << "Density is " << (double)l/ACCURACY << endl;
 
-    /*outfile << "subgraph:\n";
-    for (vector<long>::iterator v = subg.begin(); v != subg.end(); ++v) {
-        cerr << (*v + 1) << " ";
-//        cout << *v << " ";
-}
-cerr << endl;*/
-    //outfile << "Time taken in seconds: " << float(end-begin) /  CLOCKS_PER_SEC << endl;
-    // cout << endl;
+    string output_file;
+    ofstream outfile;
+    
+    if (argc >= 3)
+    {
+        output_file = argv[2];
+    }
+    else
+    {
+        output_file = "soln.tmp";
+    }
 
-    /*
-    node nodes[3];
-    arc arcs[2];
-    cType cap[2];
-    nodes[0].first = arcs + 0;
-    nodes[1].first = arcs + 1;
-    arcs[0].head = nodes + 1;
-    arcs[1].head = nodes + 0;
-    arcs[0].rev = arcs + 1;
-    arcs[1].rev = arcs + 0;
-    cap[0] = 100;
-    cap[1] = 0;*/
+    outfile.open(output_file.c_str());
+    for (int i : subg)
+    {
+        outfile << i+1 << endl;
+    }
+
+    return 0;
 }
