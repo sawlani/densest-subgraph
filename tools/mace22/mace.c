@@ -71,7 +71,10 @@ void MACE_read_param (int argc, char *argv[], PROBLEM *PP){
   while ( argv[c][0] == '-' ){
     switch (argv[c][1]){
       case 'l': II->lb = atoi (argv[c+1]);
-      break; default: goto NEXT;
+      break;
+      case 'u': II->ub = atoi (argv[c+1]);
+      break;
+      default: goto NEXT;
     }
     c += 2;
     if ( argc < c+1 ){ MACE_error (); return; }
