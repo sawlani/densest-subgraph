@@ -9,7 +9,7 @@
 #include "values.h"
 #include "types.h"          /* type definitions */
 #include "parser.c"         /* parser */
-#include "timer.c"          /* timing routine */
+//#include "timer.c"          /* timing routine */
 
 
 /*
@@ -46,7 +46,7 @@ long relabelCnt   = 0;       /* number of relabels */
 long updateCnt    = 0;       /* number of updates */
 long gapCnt   = 0;           /* number of gaps */
 long gNodeCnt = 0;           /* number of nodes after gap */  
-float t, t2;                 /* for saving times */
+//float t, t2;                 /* for saving times */
 node   *sentinelNode;        /* end of the node list marker */
 arc *stopA;                  /* used in forAllArcs */
 long workSinceUpdate=0;      /* the number of arc scans since last update */
@@ -817,13 +817,13 @@ excessType min_cut(_n, _m, _nodes, _arcs, _cap, _source, _sink, _nMin)
     cc = allocDS();
     if ( cc ) { fprintf ( stderr, "Allocation error\n"); exit ( 1 ); }
 
-    t = timer();
-    t2 = t;
+    //t = timer();
+    //t2 = t;
 
     init();
     stageOne ( );
 
-    t2 = timer() - t2;
+    //t2 = timer() - t2;
 
     // fprintf (stderr, "flow:       %12.01f\n", flow);
 

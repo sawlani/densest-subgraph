@@ -1,7 +1,7 @@
 # densest-subgraph
 
 ## File input type
-Every program reads an edge list in the following format:
+For algorithms for unweighted graphs, the input graph file is required to be of the format:
 
 ```
 n m
@@ -13,51 +13,54 @@ u2 v2
 um vm
 ```
 
-## Exact algorithm
+For algorithms for weighted graphs, the input graph file is required to be of the format:
 
-### C++ code
-
-To compile and run the code, use
 ```
-cd exactDSP-cpp
-gcc -O3 -Wall -DNO_MAIN hi_pr.c -c -o hi_pr.o
-g++ -O3 densest.cpp hi_pr.o -o ../exact
-cd ..
+n m
+u1 v1 w1
+u2 v2 w2
+.
+.
+.
+um vm wm
+```
+
+
+To compile all four versions of the code, i.e.,
+
+1. exact max-flow based algorithm for unweighted graphs
+2. exact max-flow based algorithm for weighted graphs
+3. approximate iterative peeling for unweighted graphs
+4. approximate iterative peeling for weighted graphs
+
+simply run
+```
+sudo chmod +x compile_all.sh
+./compile_all.sh
+```
+
+To run the code, the syntax goes as follows:
+
+1. exact max-flow based algorithm for unweighted graphs
+
+```
 ./exact multiplier < input_file
 ```
 
-## Approximation algorithms
-### Recursive peeling: C++ code
+2. exact max-flow based algorithm for weighted graphs
 
-To compile the C++ code, use:
 ```
-g++ -O3 recursive_peeling_simple.cpp -o rps
-./rps number_of_iterations < input_file
+./exactweighted multiplier < input_file
 ```
 
-### MWU: C++ code
+3. approximate iterative peeling for unweighted graphs
 
-To compile the C++ code, use:
 ```
-cd approxDSP-MWU
-g++ -o mwu dsp_mwu.cpp
+./ip no_of_iterations < input_file
 ```
 
-To run the code, use:
-```
-./mwu number_of_iterations accuracy input_file output_file
-```
-The last argument is optional.
+4. approximate iterative peeling for weighted graphs
 
-The results are on the command line.
-
-### MWU-version2
-To use the alternate MWU formulation,
-replace
 ```
-g++ -o mwu dsp_mwu.cpp
-```
-with
-```
-g++ -o mwu dsp_mwu2.cpp
+./ipnw no_of_iterations < input_file
 ```
